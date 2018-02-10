@@ -1,7 +1,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![unofficial Google Analytics for GitHub](https://gaforgithub.azurewebsites.net/api?repo=AzureContainerInstancesManagement)](https://github.com/dgkanatsios/gaforgithub)
-![](https://img.shields.io/badge/status-stable-green.svg)
+![](https://img.shields.io/badge/status-alpha-green.svg)
 
 # AzureContainerInstancesManagement
 *Work In Progress* Manage Azure Container Instances using Azure Functions
