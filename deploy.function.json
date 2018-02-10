@@ -11,10 +11,7 @@
     },
     "parameters": {
         "functionName": {
-            "type": "string",
-            "metadata": {
-                "description": "It's your Azure Functions domain name"
-            }
+            "type": "string"
         },
         "storageName": {
             "type": "string"
@@ -26,8 +23,7 @@
             "type": "string"
         },
         "Repository": {
-            "type": "string",
-            "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
+            "type": "string"
         }
     },
 	"resources": [
