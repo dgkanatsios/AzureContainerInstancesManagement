@@ -5,8 +5,8 @@ const ContainerInstanceManagementClient = require('azure-arm-containerinstance')
 
 const tableName = constants.tableName;
 const clientId = process.env.CLIENTID;
-const secret = process.env.SECRET;
-const domain = process.env.DOMAIN;
+const secret = process.env.CLIENTSECRET;
+const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
 function insertIntoTable(body) {
