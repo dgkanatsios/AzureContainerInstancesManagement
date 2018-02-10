@@ -1,0 +1,113 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"variables": {
+        "hostingPlanName": "[concat(toLower(parameters('name')), 'freeplan')]",
+        "serverFarmResourceGroup": "[resourceGroup().id]",
+        "workerSize": "0",
+        "subscriptionId": "[subscription().subscriptionId]",
+        "sku": "Free",
+        "skuCode": "F1"
+    },
+    "parameters": {
+        "name": {
+            "type": "string",
+            "metadata": {
+                "description": "It's your Azure Functions domain name"
+            }
+        },
+        "storageName": {
+            "type": "string"
+		},
+		"aciDetailsStorageName":{
+			"type": "string"
+		},
+        "location": {
+            "type": "string"
+        },
+        "Repository": {
+            "type": "string",
+            "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
+        }
+    },
+	"resources": [
+		{
+            "type": "microsoft.insights/components",
+            "apiVersion": "2015-05-01",
+            "name": "[parameters('name')]",
+            "location": "South Central US",
+            "properties": {
+                "ApplicationId": "[parameters('name')]"
+            }
+        },
+		{
+			"apiVersion": "2015-05-01-preview",
+			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[parameters('storageName')]",
+			"location": "[parameters('location')]",
+			"properties": {
+				"accountType": "Standard_LRS"
+			}
+		},
+		{
+			"apiVersion": "2015-05-01-preview",
+			"type": "Microsoft.Storage/storageAccounts",
+			"name": "[parameters('aciDetailsStorageName')]",
+			"location": "[parameters('location')]",
+			"properties": {
+				"accountType": "Standard_LRS"
+			}
+		},
+		{
+			"apiVersion": "2016-03-01",
+			"name": "[parameters('name')]",
+			"type": "Microsoft.Web/Sites",
+			"properties": {
+				"name": "[parameters('name')]",
+				"siteConfig": {},
+				"clientAffinityEnabled": false,
+				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"hostingEnvironment": ""
+			},
+			"resources": [
+				{
+					"apiVersion": "2015-08-01",
+					"name": "web",
+					"type": "sourcecontrols",
+					"dependsOn": [
+						"[resourceId('Microsoft.Web/Sites/', parameters('name'))]"
+					],
+					"properties": {
+						"RepoUrl": "[parameters('Repository')]",
+						"branch": "master",
+						"IsManualIntegration": "true"
+					}
+				}
+			],
+			"dependsOn": [
+				"[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName'))]"
+			],
+			"location": "[parameters('location')]",
+			"kind": "functionapp"
+		},
+		{
+			"apiVersion": "2016-09-01",
+			"name": "[variables('hostingPlanName')]",
+			"type": "Microsoft.Web/serverfarms",
+			"location": "[parameters('location')]",
+			"properties": {
+				"name": "[variables('hostingPlanName')]",
+				"workerSizeId": "[variables('workerSize')]",
+				"reserved": false,
+				"numberOfWorkers": "1",
+				"hostingEnvironment": ""
+			},
+			"sku": {
+				"Tier": "[variables('sku')]",
+				"Name": "[variables('skuCode')]"
+			}
+		}
+	]
+}

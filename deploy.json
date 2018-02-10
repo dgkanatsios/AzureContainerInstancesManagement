@@ -1,0 +1,141 @@
+{
+    "$schema"       : "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+        "storageName"         : "[concat(uniqueString(parameters('name')), 'storage')]",
+        "acidetailsStorageName": "[concat(uniqueString(parameters('name')), 'acidetails')]",
+        "hostingPlanName"     : "[concat(toLower(parameters('name')), 'freeplan')]"
+    },
+    "parameters": {
+        "name": {
+            "type"    : "string",
+            "metadata": {
+                "description": "It's your Azure Function's domain name. Make sure it is unique, as this will determine Function's DNS"
+            }
+        },
+        "location": {
+            "type"        : "string",
+            "defaultValue": "North Europe",
+            "metadata"    : {
+                "description": "The Azure datacenter's location where your resources will be deployed"
+            }
+        },
+        "ClientId": {
+            "type"    : "securestring",
+            "metadata": {
+                "description": "Service Principal Id which can be used by functions to create Azure Container Groups"
+            }
+        },
+        "ClientSecret": {
+            "type"    : "securestring",
+            "metadata": {
+                "description": "Service Principal Secret which can be used by functions to create Azure Container Groups"
+            }
+        },
+        "DefaultDockerImage": {
+            "type"        : "string",
+            "defaultValue": "",
+            "metadata"    : {
+                "description": "If you want Azure Container Groups to be deployed with default Docker image, specify it in this parameter. You can override it during deployment of specific Azure Container Group"
+            }
+        },
+        "Ports": {
+            "type"        : "string",
+            "defaultValue": "",
+            "metadata"    : {
+                "description": "Specify the ports your Docker image needs, separated by comma (,). You can override this during deployment of specific Azure Container Image"
+            }
+        },
+        "Repository": {
+            "type"        : "string",
+            "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
+        }
+    },
+    "resources": [{
+            "name"      : "MainResources",
+            "type"      : "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "properties": {
+                "mode"        : "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.json"
+                },
+                "parameters": {
+                    "storageName": {
+                        "value": "[variables('storageName')]"
+                    },
+                    "acidetailsStorageName": {
+                        "value": "[variables('acidetailsStorageName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "name": {
+                        "value": "[parameters('name')]"
+                    },
+                    "Repository": {
+                        "value": "[parameters('Repository')]"
+                    }
+                }
+            }
+        },
+        {
+            "name"      : "SiteSettings",
+            "type"      : "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn" : ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
+            "properties": {
+                "mode"        : "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.config.json"
+                },
+                "parameters": {
+                    "storageName": {
+                        "value": "[variables('storageName')]"
+                    },
+                    "acidetailsStorageName": {
+                        "value": "[variables('acidetailsStorageName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "ClientId": {
+                        "value": "[parameters('ClientId')]"
+                    },
+                    "ClientSecret": {
+                        "value": "[parameters('ClientSecret')]"
+                    },
+                    "DefaultDockerImage": {
+                        "value": "[parameters('DefaultDockerImage')]"
+                    },
+                    "Ports": {
+                        "value": "[parameters('Ports')]"
+                    },
+                    "functionName": {
+                        "value": "[parameters('name')]"
+                    },
+                    "hostingPlanName": {
+                        "value": "[variables('hostingPlanName')]"
+                    }
+                }
+            }
+        },
+        {
+            "name"      : "ACIMonitor",
+            "type"      : "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "dependsOn" : ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
+            "properties": {
+                "mode"        : "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.eventgrid.json"
+                },
+                "parameters": {
+                    "functionName": {
+                        "value": "[parameters('name')]"
+                    }
+                }
+            }
+        }
+    ]
+}
