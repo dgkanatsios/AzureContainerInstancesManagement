@@ -15,7 +15,7 @@
         },
         "location": {
             "type"        : "string",
-            "defaultValue": "North Europe",
+            "defaultValue": "East US",
             "metadata"    : {
                 "description": "The Azure datacenter's location where your resources will be deployed"
             }

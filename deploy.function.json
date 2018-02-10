@@ -2,7 +2,7 @@
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"variables": {
-        "hostingPlanName": "[concat(toLower(parameters('name')), 'freeplan')]",
+        "hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]",
         "serverFarmResourceGroup": "[resourceGroup().id]",
         "workerSize": "0",
         "subscriptionId": "[subscription().subscriptionId]",
@@ -10,7 +10,7 @@
         "skuCode": "F1"
     },
     "parameters": {
-        "name": {
+        "functionName": {
             "type": "string",
             "metadata": {
                 "description": "It's your Azure Functions domain name"
@@ -37,7 +37,7 @@
             "name": "[parameters('name')]",
             "location": "South Central US",
             "properties": {
-                "ApplicationId": "[parameters('name')]"
+                "ApplicationId": "[parameters('functionName')]"
             }
         },
 		{
@@ -60,10 +60,10 @@
 		},
 		{
 			"apiVersion": "2016-03-01",
-			"name": "[parameters('name')]",
+			"name": "[parameters('functionName')]",
 			"type": "Microsoft.Web/Sites",
 			"properties": {
-				"name": "[parameters('name')]",
+				"name": "[parameters('functionName')]",
 				"siteConfig": {},
 				"clientAffinityEnabled": false,
 				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
@@ -75,7 +75,7 @@
 					"name": "web",
 					"type": "sourcecontrols",
 					"dependsOn": [
-						"[resourceId('Microsoft.Web/Sites/', parameters('name'))]"
+						"[resourceId('Microsoft.Web/Sites/', parameters('functionName'))]"
 					],
 					"properties": {
 						"RepoUrl": "[parameters('Repository')]",
