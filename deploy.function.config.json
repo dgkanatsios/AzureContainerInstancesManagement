@@ -75,7 +75,6 @@
                         "CLIENTSECRET": "[parameters('ClientSecret')]",
                         "DOCKERIMAGE": "[parameters('DefaultDockerImage')]",
                         "DOCKERPORTS": "[parameters('Ports')]",
-                        "WEBHOOKFOREVENTGRID": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').trigger_url]",
                         "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
                         "AZURE_STORAGE_ACCOUNT":"[parameters('aciDetailsStorageName')]",
                         "AZURE_STORAGE_ACCESS_KEY":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
