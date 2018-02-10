@@ -2,12 +2,12 @@
     "$schema"       : "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "variables": {
-        "storageName"         : "[concat(uniqueString(parameters('name')), 'storage')]",
-        "acidetailsStorageName": "[concat(uniqueString(parameters('name')), 'acidetails')]",
-        "hostingPlanName"     : "[concat(toLower(parameters('name')), 'freeplan')]"
+        "storageName"         : "[concat(uniqueString(parameters('functionName')), 'storage')]",
+        "acidetailsStorageName": "[concat(uniqueString(parameters('functionName')), 'acidetails')]",
+        "hostingPlanName"     : "[concat(toLower(parameters('functionName')), 'freeplan')]"
     },
     "parameters": {
-        "name": {
+        "functionName": {
             "type"    : "string",
             "metadata": {
                 "description": "It's your Azure Function's domain name. Make sure it is unique, as this will determine Function's DNS"
@@ -70,8 +70,8 @@
                     "location": {
                         "value": "[parameters('location')]"
                     },
-                    "name": {
-                        "value": "[parameters('name')]"
+                    "functionName": {
+                        "value": "[parameters('functionName')]"
                     },
                     "Repository": {
                         "value": "[parameters('Repository')]"
@@ -112,7 +112,7 @@
                         "value": "[parameters('Ports')]"
                     },
                     "functionName": {
-                        "value": "[parameters('name')]"
+                        "value": "[parameters('functionName')]"
                     },
                     "hostingPlanName": {
                         "value": "[variables('hostingPlanName')]"
@@ -132,7 +132,7 @@
                 },
                 "parameters": {
                     "functionName": {
-                        "value": "[parameters('name')]"
+                        "value": "[parameters('functionName')]"
                     }
                 }
             }

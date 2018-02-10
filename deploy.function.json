@@ -34,7 +34,7 @@
 		{
             "type": "microsoft.insights/components",
             "apiVersion": "2015-05-01",
-            "name": "[parameters('name')]",
+            "name": "[parameters('functionName')]",
             "location": "South Central US",
             "properties": {
                 "ApplicationId": "[parameters('functionName')]"
