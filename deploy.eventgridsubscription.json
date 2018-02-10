@@ -9,7 +9,7 @@
     "resources": [
         {
             "type": "Microsoft.EventGrid/eventSubscriptions",
-            "name": "[concat(parameters('functionName'),EventGridWebhook)]",
+            "name": "[concat(parameters('functionName'),'EventGridWebhook')]",
             "apiVersion": "2018-01-01",
             "properties": {
                 "destination": {
