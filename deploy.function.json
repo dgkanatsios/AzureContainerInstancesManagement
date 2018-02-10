@@ -89,6 +89,13 @@
 					"[resourceId('Microsoft.Web/Sites/', parameters('functionName'))]"
 				],
 				"properties": {
+					"AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+					"AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+					"FUNCTIONS_EXTENSION_VERSION": "~1",
+					"WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+					"APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
+					"AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
+					"AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
 					"RepoUrl": "[parameters('repoUrl')]",
 					"branch": "master",
 					"IsManualIntegration": true
