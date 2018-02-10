@@ -1,62 +1,62 @@
 {
-    "$schema"       : "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "variables": {
-        "storageName"         : "[concat(uniqueString(parameters('functionName')), 'storage')]",
+        "storageName": "[concat(uniqueString(parameters('functionName')), 'storage')]",
         "acidetailsStorageName": "[concat(uniqueString(parameters('functionName')), 'acidetails')]",
-        "hostingPlanName"     : "[concat(toLower(parameters('functionName')), 'freeplan')]"
+        "hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]"
     },
     "parameters": {
         "functionName": {
-            "type"    : "string",
+            "type": "string",
             "metadata": {
                 "description": "It's your Azure Function's domain name. Make sure it is unique, as this will determine Function's DNS"
             }
         },
         "location": {
-            "type"        : "string",
+            "type": "string",
             "defaultValue": "East US",
-            "metadata"    : {
+            "metadata": {
                 "description": "The Azure datacenter's location where your resources will be deployed"
             }
         },
         "ClientId": {
-            "type"    : "securestring",
+            "type": "securestring",
             "metadata": {
                 "description": "Service Principal Id which can be used by functions to create Azure Container Groups"
             }
         },
         "ClientSecret": {
-            "type"    : "securestring",
+            "type": "securestring",
             "metadata": {
                 "description": "Service Principal Secret which can be used by functions to create Azure Container Groups"
             }
         },
         "DefaultDockerImage": {
-            "type"        : "string",
+            "type": "string",
             "defaultValue": "",
-            "metadata"    : {
+            "metadata": {
                 "description": "If you want Azure Container Groups to be deployed with default Docker image, specify it in this parameter. You can override it during deployment of specific Azure Container Group"
             }
         },
         "Ports": {
-            "type"        : "string",
+            "type": "string",
             "defaultValue": "",
-            "metadata"    : {
+            "metadata": {
                 "description": "Specify the ports your Docker image needs, separated by comma (,). You can override this during deployment of specific Azure Container Image"
             }
         },
-        "Repository": {
-            "type"        : "string",
+        "repoUrl": {
+            "type": "string",
             "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
         }
     },
     "resources": [{
-            "name"      : "MainResources",
-            "type"      : "Microsoft.Resources/deployments",
+            "name": "MainResources",
+            "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "properties": {
-                "mode"        : "Incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.json"
                 },
@@ -73,19 +73,19 @@
                     "functionName": {
                         "value": "[parameters('functionName')]"
                     },
-                    "Repository": {
-                        "value": "[parameters('Repository')]"
+                    "repoUrl": {
+                        "value": "[parameters('repoUrl')]"
                     }
                 }
             }
         },
         {
-            "name"      : "SiteSettings",
-            "type"      : "Microsoft.Resources/deployments",
+            "name": "SiteSettings",
+            "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
-            "dependsOn" : ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
+            "dependsOn": ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
             "properties": {
-                "mode"        : "Incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.config.json"
                 },
@@ -121,12 +121,12 @@
             }
         },
         {
-            "name"      : "ACIMonitor",
-            "type"      : "Microsoft.Resources/deployments",
+            "name": "ACIMonitor",
+            "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
-            "dependsOn" : ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
+            "dependsOn": ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
             "properties": {
-                "mode"        : "Incremental",
+                "mode": "Incremental",
                 "templateLink": {
                     "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.eventgridsubscription.json"
                 },

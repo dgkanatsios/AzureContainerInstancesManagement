@@ -2,40 +2,39 @@
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"variables": {
-        "hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]",
-        "serverFarmResourceGroup": "[resourceGroup().id]",
-        "workerSize": "0",
-        "subscriptionId": "[subscription().subscriptionId]",
-        "sku": "Free",
-        "skuCode": "F1"
-    },
-    "parameters": {
-        "functionName": {
-            "type": "string"
-        },
-        "storageName": {
-            "type": "string"
-		},
-		"aciDetailsStorageName":{
+		"hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]",
+		"serverFarmResourceGroup": "[resourceGroup().id]",
+		"workerSize": "0",
+		"subscriptionId": "[subscription().subscriptionId]",
+		"sku": "Free",
+		"skuCode": "F1"
+	},
+	"parameters": {
+		"functionName": {
 			"type": "string"
 		},
-        "location": {
-            "type": "string"
-        },
-        "Repository": {
-            "type": "string"
-        }
-    },
-	"resources": [
-		{
-            "type": "microsoft.insights/components",
-            "apiVersion": "2015-05-01",
-            "name": "[parameters('functionName')]",
-            "location": "South Central US",
-            "properties": {
-                "ApplicationId": "[parameters('functionName')]"
-            }
-        },
+		"storageName": {
+			"type": "string"
+		},
+		"aciDetailsStorageName": {
+			"type": "string"
+		},
+		"location": {
+			"type": "string"
+		},
+		"repoUrl": {
+			"type": "string"
+		}
+	},
+	"resources": [{
+			"type": "microsoft.insights/components",
+			"apiVersion": "2015-05-01",
+			"name": "[parameters('functionName')]",
+			"location": "South Central US",
+			"properties": {
+				"ApplicationId": "[parameters('functionName')]"
+			}
+		},
 		{
 			"apiVersion": "2015-05-01-preview",
 			"type": "Microsoft.Storage/storageAccounts",
@@ -55,40 +54,6 @@
 			}
 		},
 		{
-			"apiVersion": "2016-03-01",
-			"name": "[parameters('functionName')]",
-			"type": "Microsoft.Web/Sites",
-			"properties": {
-				"name": "[parameters('functionName')]",
-				"siteConfig": {},
-				"clientAffinityEnabled": false,
-				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-				"hostingEnvironment": ""
-			},
-			"resources": [
-				{
-					"apiVersion": "2015-08-01",
-					"name": "web",
-					"type": "sourcecontrols",
-					"dependsOn": [
-						"[resourceId('Microsoft.Web/Sites/', parameters('functionName'))]"
-					],
-					"properties": {
-						"RepoUrl": "[parameters('Repository')]",
-						"branch": "master",
-						"IsManualIntegration": "false"
-					}
-				}
-			],
-			"dependsOn": [
-				"[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
-				"[resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName'))]"
-			],
-			"location": "[parameters('location')]",
-			"kind": "functionapp"
-		},
-		{
 			"apiVersion": "2016-09-01",
 			"name": "[variables('hostingPlanName')]",
 			"type": "Microsoft.Web/serverfarms",
@@ -104,6 +69,38 @@
 				"Tier": "[variables('sku')]",
 				"Name": "[variables('skuCode')]"
 			}
+		},
+		{
+			"apiVersion": "2016-03-01",
+			"name": "[parameters('functionName')]",
+			"type": "Microsoft.Web/Sites",
+			"properties": {
+				"name": "[parameters('functionName')]",
+				"siteConfig": {},
+				"clientAffinityEnabled": false,
+				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"hostingEnvironment": ""
+			},
+			"resources": [{
+				"apiVersion": "2015-08-01",
+				"name": "web",
+				"type": "sourcecontrols",
+				"dependsOn": [
+					"[resourceId('Microsoft.Web/Sites/', parameters('functionName'))]"
+				],
+				"properties": {
+					"RepoUrl": "[parameters('repoUrl')]",
+					"branch": "master",
+					"IsManualIntegration": true
+				}
+			}],
+			"dependsOn": [
+				"[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
+				"[resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName'))]"
+			],
+			"location": "[parameters('location')]",
+			"kind": "functionapp"
 		}
 	]
 }

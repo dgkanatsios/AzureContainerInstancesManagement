@@ -6,25 +6,23 @@
             "type": "string"
         }
     },
-    "resources": [
-        {
-            "type": "Microsoft.EventGrid/eventSubscriptions",
-            "name": "[concat(parameters('functionName'),'EventGridWebhook')]",
-            "apiVersion": "2018-01-01",
-            "properties": {
-                "destination": {
-                    "endpointType": "WebHook",
-                    "properties": {
-                        "endpointUrl": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').trigger_url]"
-                    }
-                },
-                "filter": {
-                    "subjectBeginsWith": "",
-                    "subjectEndsWith": "",
-                    "isSubjectCaseSensitive": false,
-                    "includedEventTypes": ["All"]
+    "resources": [{
+        "type": "Microsoft.EventGrid/eventSubscriptions",
+        "name": "[concat(parameters('functionName'),'EventGridWebhook')]",
+        "apiVersion": "2018-01-01",
+        "properties": {
+            "destination": {
+                "endpointType": "WebHook",
+                "properties": {
+                    "endpointUrl": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').trigger_url]"
                 }
+            },
+            "filter": {
+                "subjectBeginsWith": "",
+                "subjectEndsWith": "",
+                "isSubjectCaseSensitive": false,
+                "includedEventTypes": ["All"]
             }
         }
-    ]
+    }]
 }

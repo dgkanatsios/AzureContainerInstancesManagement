@@ -11,78 +11,60 @@
         "storageName": {
             "type": "string"
         },
-        "aciDetailsStorageName":{
+        "aciDetailsStorageName": {
             "type": "string"
         },
         "ClientId": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Service Principal Id which can be used by functions to create VMs"
-            }
+            "type": "securestring"
         },
         "ClientSecret": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Service Principal Secret which can be used by functions to create VMs"
-            }
+            "type": "securestring"
         },
         "DefaultDockerImage": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "If you want server VMs to be deployed with default image, specify it in this parameter. You can override it during deployment of specific VM"
-            }
+            "type": "string"
         },
         "Ports": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "If your game server needs specific port range by default, specify it here. You can override this during deployment of specific VM"
-            }
+            "type": "string"
         },
         "hostingPlanName": {
             "type": "string"
         }
     },
-    "resources": [
-        {
-            "apiVersion": "2016-03-01",
+    "resources": [{
+        "apiVersion": "2016-03-01",
+        "name": "[parameters('functionName')]",
+        "type": "Microsoft.Web/Sites",
+        "properties": {
             "name": "[parameters('functionName')]",
-            "type": "Microsoft.Web/Sites",
-            "properties": {
-                "name": "[parameters('functionName')]",
-                "siteConfig": {},
-                "clientAffinityEnabled": false,
-                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "hostingEnvironment": ""
-            },
-            "resources": [
-                {
-                    "apiVersion": "2015-08-01",
-                    "name": "appsettings",
-                    "type": "config",
-                    "dependsOn": [
-                        "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/Sites', parameters('functionName'))]"
-                    ],
-                    "properties": {
-                        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
-                        "SUBSCRIPTIONID": "[subscription().subscriptionId]",
-                        "TENANT": "[subscription().tenantId]",
-                        "CLIENTID": "[parameters('ClientId')]",
-                        "CLIENTSECRET": "[parameters('ClientSecret')]",
-                        "DOCKERIMAGE": "[parameters('DefaultDockerImage')]",
-                        "DOCKERPORTS": "[parameters('Ports')]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
-                        "AZURE_STORAGE_ACCOUNT":"[parameters('aciDetailsStorageName')]",
-                        "AZURE_STORAGE_ACCESS_KEY":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]"
-                    }
-                }
+            "siteConfig": {},
+            "clientAffinityEnabled": false,
+            "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+            "hostingEnvironment": ""
+        },
+        "resources": [{
+            "apiVersion": "2015-08-01",
+            "name": "appsettings",
+            "type": "config",
+            "dependsOn": [
+                "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/Sites', parameters('functionName'))]"
             ],
-            "location": "[parameters('location')]",
-            "kind": "functionapp"
-        }
-    ]
+            "properties": {
+                "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+                "FUNCTIONS_EXTENSION_VERSION": "~1",
+                "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+                "SUBSCRIPTIONID": "[subscription().subscriptionId]",
+                "TENANT": "[subscription().tenantId]",
+                "CLIENTID": "[parameters('ClientId')]",
+                "CLIENTSECRET": "[parameters('ClientSecret')]",
+                "DOCKERIMAGE": "[parameters('DefaultDockerImage')]",
+                "DOCKERPORTS": "[parameters('Ports')]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
+                "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
+                "AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]"
+            }
+        }],
+        "location": "[parameters('location')]",
+        "kind": "functionapp"
+    }]
 }
