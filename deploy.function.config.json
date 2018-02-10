@@ -77,8 +77,7 @@
                         "DOCKERPORTS": "[parameters('Ports')]",
                         "APPINSIGHTS_INSTRUMENTATIONKEY":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
                         "AZURE_STORAGE_ACCOUNT":"[parameters('aciDetailsStorageName')]",
-                        "AZURE_STORAGE_ACCESS_KEY":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
-                        "Project":"functions"
+                        "AZURE_STORAGE_ACCESS_KEY":"[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]"
                     }
                 }
             ],

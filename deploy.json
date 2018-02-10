@@ -128,7 +128,7 @@
             "properties": {
                 "mode"        : "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.eventgrid.json"
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.eventgridsubscription.json"
                 },
                 "parameters": {
                     "functionName": {
