@@ -66,7 +66,7 @@ module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
         setInTableAsDeleting(req.body).then(() => {
             deleteContainerGroup(req.body)
-        }).catch(error => context.error(error)).finally(() => context.done());
+        }).catch(error => context.error(error)).then(() => context.done());
     } else {
         context.done();
     }

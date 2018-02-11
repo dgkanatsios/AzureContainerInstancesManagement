@@ -41,43 +41,47 @@ function insertIntoTable(body) {
 }
 
 function createContainerGroup(body) {
-    return new Promise(function(resolve,reject) {
-    MsRest.loginWithServicePrincipalSecret(
-        clientId,
-        secret,
-        domain,
-        (err, credentials) => {
-            if (err) throw err;
+    return new Promise(function (resolve, reject) {
+        MsRest.loginWithServicePrincipalSecret(
+            clientId,
+            secret,
+            domain,
+            (err, credentials) => {
+                if (err) throw err;
 
-            const ports = (body.ports || process.env.DOCKERPORTS).split(',').map(function (x) {
-                return {
-                    protocol: 'TCP',
-                    port: x
-                }
-            });
+                const ports = (body.ports || process.env.DOCKERPORTS).toString().split(',').map(function (x) {
+                    return {
+                        protocol: 'TCP',
+                        port: Number(x)
+                    }
+                });
 
-            const containerGroup = {
-                location: body.location,
-                containers: [{
-                    name: body.containerInstanceName,
-                    image: body.dockerImage || process.env.DOCKERIMAGE,
-                    resources: {
-                        requests: {
-                            memoryInGB: body.memoryInGB || constants.defaultMemory,
-                            cpu: body.cpu || constants.defaultCPU
-                        }
+                const containerGroup = {
+                    location: body.location,
+                    containers: [{
+                        name: body.containerInstanceName,
+                        image: body.dockerImage || process.env.DOCKERIMAGE,
+                        resources: {
+                            requests: {
+                                memoryInGB: body.memoryInGB || constants.defaultMemory,
+                                cpu: body.cpu || constants.defaultCPU
+                            }
+                        },
+                        ports: ports
+                    }],
+                    ipAddress: {
+                        ports: ports,
+                        type: 'Public'
                     },
-                    ports: ports
-                }],
-                osType: body.osType,
-            };
+                    osType: body.osType,
+                };
 
-            let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+                let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-            client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, containerGroup)
-                .then(response => resolve(JSON.stringify(response)))
-                .catch(err => reject(err));
-        });
+                client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, containerGroup)
+                    .then(response => resolve(JSON.stringify(response)))
+                    .catch(err => reject(err));
+            });
     });
 }
 
@@ -85,7 +89,7 @@ function createContainerGroup(body) {
 
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
-        insertIntoTable(req.body).then(() => createContainerGroup(req.body)).catch(error => context.error(error)).finally(()=>context.done());
+        insertIntoTable(req.body).then(() => createContainerGroup(req.body)).catch(error => context.error(error)).then(() => context.done());
     } else {
         context.done();
     }
