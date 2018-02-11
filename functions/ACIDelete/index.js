@@ -40,7 +40,8 @@ function setInTableAsDeleting(body) {
     });
 }
 
-function deleteContainerGroup(body, callback) {
+function deleteContainerGroup(body) {
+    return new Promise(function(resolve,reject) {
     MsRest.loginWithServicePrincipalSecret(
         clientId,
         secret,
@@ -52,19 +53,18 @@ function deleteContainerGroup(body, callback) {
 
             client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
                 .then(response => {
-                    console.log(JSON.stringify(response));
-                    callback(null, response);
+                    resolve(JSON.stringify(response));
                 })
                 .catch(err => {
-                    console.log(err);
-                    callback(err, null);
+                    reject(err);
                 });
         });
+    });
 }
 
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
-        deleteFromTable(req.body).then(() => {
+        setInTableAsDeleting(req.body).then(() => {
             deleteContainerGroup(req.body)
         }).catch(error => context.error(error)).finally(() => context.done());
     } else {

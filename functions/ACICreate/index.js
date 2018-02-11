@@ -41,6 +41,7 @@ function insertIntoTable(body) {
 }
 
 function createContainerGroup(body) {
+    return new Promise(function(resolve,reject) {
     MsRest.loginWithServicePrincipalSecret(
         clientId,
         secret,
@@ -74,16 +75,17 @@ function createContainerGroup(body) {
             let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
             client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, containerGroup)
-                .then(response => console.log(JSON.stringify(response)))
-                .catch(err => console.log(err));
+                .then(response => resolve(JSON.stringify(response)))
+                .catch(err => reject(err));
         });
+    });
 }
 
 
 
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
-        insertIntoTable(req.body).then(() => createContainerGroup(req.body)).catch(error => context.error(error)).finally(context.done());
+        insertIntoTable(req.body).then(() => createContainerGroup(req.body)).catch(error => context.error(error)).finally(()=>context.done());
     } else {
         context.done();
     }
