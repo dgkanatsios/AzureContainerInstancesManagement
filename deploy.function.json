@@ -110,6 +110,10 @@
                         {
                             "name":"APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]"
+						},
+                        {
+                            "name": "Project",
+                            "value": "functions"
                         }
                     ]
                 }				
