@@ -88,14 +88,6 @@
                             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
                         },
                         {
-                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(parameters('functionName'))]"
-                        },
-                        {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
                             "value": "~1"
                         },
@@ -111,9 +103,13 @@
                             "name":"APPINSIGHTS_INSTRUMENTATIONKEY",
                             "value":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]"
 						},
+						{
+                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
+                        },
                         {
-                            "name": "Project",
-                            "value": "functions"
+                            "name": "WEBSITE_CONTENTSHARE",
+                            "value": "[toLower(parameters('functionName'))]"
                         }
                     ]
                 }				

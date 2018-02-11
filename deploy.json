@@ -90,8 +90,26 @@
                     "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.config.json"
                 },
                 "parameters": {
+                    "storageName": {
+                        "value": "[variables('storageName')]"
+                    },
+                    "acidetailsStorageName": {
+                        "value": "[variables('acidetailsStorageName')]"
+                    },
                     "location": {
                         "value": "[parameters('location')]"
+                    },
+                    "ClientId": {
+                        "value": "[parameters('ClientId')]"
+                    },
+                    "ClientSecret": {
+                        "value": "[parameters('ClientSecret')]"
+                    },
+                    "DefaultDockerImage": {
+                        "value": "[parameters('DefaultDockerImage')]"
+                    },
+                    "Ports": {
+                        "value": "[parameters('Ports')]"
                     },
                     "functionName": {
                         "value": "[parameters('functionName')]"
