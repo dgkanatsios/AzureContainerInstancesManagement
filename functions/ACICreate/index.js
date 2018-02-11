@@ -62,8 +62,8 @@ function createContainerGroup(body) {
                     image: body.dockerImage || process.env.DOCKERIMAGE,
                     resources: {
                         requests: {
-                            memoryInGB: 0.5,
-                            cpu: 0.5
+                            memoryInGB: body.memoryInGB || constants.defaultMemory,
+                            cpu: body.cpu || constants.defaultCPU
                         }
                     },
                     ports: ports
