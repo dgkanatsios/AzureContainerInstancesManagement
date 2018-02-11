@@ -10,7 +10,7 @@ const secret = process.env.CLIENTSECRET;
 const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
-function insertIntoTable(body) {
+function setInTableAsDeleting(body) {
     return new Promise(function (resolve, reject) {
         const tableSvc = azurestorage.createTableService();
         tableSvc.createTableIfNotExists(tableName,
@@ -24,14 +24,14 @@ function insertIntoTable(body) {
                     const aciData = {
                         PartitionKey: resourceGroup,
                         RowKey: resourceId,
-                        State: constants.creatingState
+                        State: constants.deletingState
                     };
 
-                    tableSvc.insertEntity(tableName, aciData, function (error, result, response) {
+                    tableSvc.replaceEntity(tableName, aciData, function (error, result, response) {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(`Inserted Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey} and `);
+                            resolve(`Updated Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey}`);
                         }
                     });
 
@@ -40,7 +40,7 @@ function insertIntoTable(body) {
     });
 }
 
-function createContainerGroup(body) {
+function deleteContainerGroup(body, callback) {
     MsRest.loginWithServicePrincipalSecret(
         clientId,
         secret,
@@ -48,43 +48,27 @@ function createContainerGroup(body) {
         (err, credentials) => {
             if (err) throw err;
 
-            const ports = (body.ports || process.env.DOCKERPORTS).split(',').map(function (x) {
-                return {
-                    protocol: 'TCP',
-                    port: x
-                }
-            });
-
-            const containerGroup = {
-                location: body.location,
-                containers: [{
-                    name: body.containerInstanceName,
-                    image: body.dockerImage || process.env.DOCKERIMAGE,
-                    resources: {
-                        requests: {
-                            memoryInGB: 0.5,
-                            cpu: 0.5
-                        }
-                    },
-                    ports: ports
-                }],
-                osType: body.osType,
-            };
-
             let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-            client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, containerGroup)
-                .then(response => console.log(JSON.stringify(response)))
-                .catch(err => console.log(err));
+            client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
+                .then(response => {
+                    console.log(JSON.stringify(response));
+                    callback(null, response);
+                })
+                .catch(err => {
+                    console.log(err);
+                    callback(err, null);
+                });
         });
 }
 
-
-
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
-        insertIntoTable(req.body).then(() => createContainerGroup(req.body)).catch(error => context.error(error)).finally(context.done());
+        deleteFromTable(req.body).then(() => {
+            deleteContainerGroup(req.body)
+        }).catch(error => context.error(error)).finally(() => context.done());
     } else {
         context.done();
     }
+
 };
