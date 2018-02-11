@@ -14,7 +14,7 @@
             "destination": {
                 "endpointType": "WebHook",
                 "properties": {
-                    "endpointUrl": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').trigger_url]"
+                    "endpointUrl": "[concat('https://',parameters('functionName'),'.azurewebsites.net/api/ACIMonitor?code=',listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').key)]"
                 }
             },
             "filter": {
