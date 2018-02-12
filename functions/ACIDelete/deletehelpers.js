@@ -28,7 +28,7 @@ function setInTableAsDeleting(body) {
                     tableSvc.retrieveEntity(tableName, aciData.PartitionKey, aciData.RowKey, function (error, result, response) {
                         if (!error) {
                             //result contains the entity
-                            tableSvc.replaceEntity(tableName, aciData, function (error, result, response) {
+                            tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
                                 if (error) {
                                     reject(error);
                                 } else {

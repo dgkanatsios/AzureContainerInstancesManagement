@@ -6,6 +6,10 @@ module.exports = {
             return false;
     },
 
+    validateReportSessionsData: function(body){
+        return Array.isArray(body);
+    },
+
     //Sample create post data
     /*
      {

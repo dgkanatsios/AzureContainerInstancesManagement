@@ -1,5 +1,6 @@
 const azurestorage = require('azure-storage');
 const constants = require('../shared/constants');
+const monitorhelpers = require('./monitorhelpers');
 
 //remember that process.env.AZURE_STORAGE_ACCOUNT and process.env.AZURE_STORAGE_ACCESS_KEY must be set with the correct values
 
@@ -21,21 +22,23 @@ function modifyTable(context, eventGridEvent) {
                     const resourceId = eventGridEvent.data.resourceUri.match(resourceIdPattern)[1];
                     const aciData = {
                         PartitionKey: resourceGroup,
-                        RowKey: resourceId,
-                        State: eventGridEvent.data.status
+                        RowKey: resourceId
                     };
-                    //ACI up and running
-                    if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteSuccess') {
-                        tableSvc.insertOrReplaceEntity(tableName, aciData, function (error, result, response) {
-                            if (error) {
-                                reject(error);
-                            } else {
-                                resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
-                            }
-                        });
-                        //ACI creation failed
+
+                    if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteSuccess') { //ACI up and running
+                        aciData.State = constants.runningState;
+                        monitorhelpers.getPublicIP(resourceGroup, resourceId).then(ip => {
+                            aciData.PublicIP = ip;
+                            tableSvc.insertOrReplaceEntity(tableName, aciData, function (error, result, response) {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
+                                }
+                            });
+                        }).catch(err => reject(err));
                     } else if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteFailure' ||
-                        eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteCancel') {
+                        eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteCancel') { //ACI creation failed
                         aciData.State = constants.failedState;
                         tableSvc.replaceEntity(tableName, aciData, function (error, result, response) {
                             if (error) {
@@ -66,7 +69,7 @@ module.exports = function (context, eventGridEvent) {
             context.log(result);
         }).catch(error => {
             context.log(error);
-        }).finally(() => {
+        }).then(() => {
             context.done();
         });
     } else {

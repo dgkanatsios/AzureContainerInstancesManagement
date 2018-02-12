@@ -7,7 +7,8 @@ const utilities = require('../functions/shared/utilities');
 
 const deletehelpers = require('../functions/ACIDelete/deletehelpers');
 const createhelpers = require('../functions/ACICreate/createhelpers');
-
+const reportsessionshelpers = require('../functions/ACIReportSessions/reportsessionshelpers');
+const monitorhelpers = require('../functions/ACIMonitor/monitorhelpers');
 
 function queryAppService(resourceGroup, credentials, subscriptionId) {
     let webSiteClient = new WebSiteManagementClient(credentials, subscriptionId);
@@ -33,11 +34,11 @@ function listContainerGroups(credentials) {
 let body = {
     resourceGroup: "acitest123",
     containerGroupName: "cigroup",
-    containerGroup : {
+    containerGroup: {
         location: "eastus",
         containers: [{
             name: "ciname",
-            image: "dgkanatsios/simpleapp", 
+            image: "dgkanatsios/simpleapp",
             resources: {
                 requests: {
                     memoryInGB: 0.5,
@@ -60,8 +61,15 @@ let body = {
     }
 };
 
+const sessions = [{
+    resourceGroup: 'acitest123',
+    containerGroupName: 'cigroup',
+    activeSessions: 5
+}];
 
 if (utilities.validatePostData(body)) {
     //createhelpers.createContainerGroup(body).then(() => createhelpers.insertIntoTable(body)).catch(error => console.log(error)).then(() => console.log('done'));
+    //monitorhelpers.getPublicIP(body.resourceGroup, body.containerGroupName).then((ip) => console.log(ip)).catch(err => console.log(err)).then(() => console.log("IP GET OK"));
+    //reportsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
     deletehelpers.deleteContainerGroup(body).then(() => deletehelpers.setInTableAsDeleting(body)).catch(error => console.log(error)).then(() => console.log('Done'));
 }
