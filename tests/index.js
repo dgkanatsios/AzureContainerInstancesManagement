@@ -57,8 +57,13 @@ let body = {
             }],
             type: 'Public'
         },
-        osType: 'Linux',
+        osType: 'Linux'
     }
+};
+
+let deleteBody = {
+    resourceGroup: "acitest123",
+    containerGroupName: "cigroup"
 };
 
 const sessions = [{
@@ -68,8 +73,17 @@ const sessions = [{
 }];
 
 if (utilities.validatePostData(body)) {
-    //createhelpers.createContainerGroup(body).then(() => createhelpers.insertIntoTable(body)).catch(error => console.log(error)).then(() => console.log('done'));
+
+    createACI(body);
     //monitorhelpers.getPublicIP(body.resourceGroup, body.containerGroupName).then((ip) => console.log(ip)).catch(err => console.log(err)).then(() => console.log("IP GET OK"));
     //reportsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
-    deletehelpers.deleteContainerGroup(body).then(() => deletehelpers.setInTableAsDeleting(body)).catch(error => console.log(error)).then(() => console.log('Done'));
+    //deletehelpers.deleteContainerGroup(deleteBody).then(() => deletehelpers.setInTableAsDeleting(deleteBody)).catch(error => console.log(error)).then(() => console.log('Done'));
+}
+
+function createACI(body) {
+    if (utilities.validateCreatePostData) {
+        createhelpers.createContainerGroup(body).then(() => createhelpers.insertIntoTable(body)).catch(error => console.log(error)).then(() => console.log('done'));
+    } else {
+        console.log('invalid post data');
+    }
 }

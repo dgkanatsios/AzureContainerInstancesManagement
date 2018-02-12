@@ -1,28 +1,27 @@
 const utilities = require('../shared/utilities');
-const deletehelpers = require('./deletehelpers');
+const detailshelpers = require('./detailshelpers');
 
-
+//returns details a container
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
-        deletehelpers.deleteContainerGroup(req.body).then(() => {
-            return deletehelpers.setInTableAsDeleting(req.body);
-        }).then(() => {
-            context.res = 'Delete OK';
+        detailshelpers.getContainerGroupDetails(req.body).then((res) => {
+            context.res = {
+                body: res
+            };
             context.done();
         }).catch(error => {
-            context.error(error);
             utilities.setErrorAndCloseContext(context, error, 500);
         });
     } else {
         utilities.setErrorAndCloseContext(context, 'Need to specify resourceGroup and containerGroupName', 400);
     }
-
 };
 
-//POST Data
+//sample POST data
+//the request can optionally contain a type:"logs" property. In this case, the Function will retrieve the logs of the container group
 /*
 {
     resourceGroup: "acitest123",
-    containerGroupName: "cigroup2"
+    containerGroupName: "cigroup"
 }
 */

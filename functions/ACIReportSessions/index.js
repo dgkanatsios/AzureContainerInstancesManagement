@@ -3,9 +3,25 @@ const reportsessionshelpers = require('./reportsessionshelpers');
 
 module.exports = function (context, req) {
     if (utilities.validateReportSessionsData(req.body)) {
-        reportsessionshelpers.setSessions(req.body).catch(err => context.error(err)).then(() => context.done());
+        reportsessionshelpers.setSessions(req.body).catch(error => {
+            utilities.setErrorAndCloseContext(context, error, 500);
+        }).then(() => {
+            context.res = {
+                body: 'Report sessions OK'
+            };
+            context.done();
+        });
     } else {
-        context.done();
+        utilities.setErrorAndCloseContext(context, 'Need to specify array of object containing resourceGroup, containerGroupName, activeSessions', 400);
     }
 
 };
+
+//POST data is
+/*
+const acidata = [{
+    resourceGroup: '',
+    containerGroupName: '',
+    activeSessions: 5
+}];
+*/

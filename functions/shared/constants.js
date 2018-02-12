@@ -4,6 +4,5 @@ module.exports = {
     runningState:'Running',
     deletingState:'Deleting',
     failedState:'Failed',
-    defaultMemory: 0.5,
-    defaultCPU: 0.5
+    markedForDeletionState: 'MarkedForDeletion'
 }

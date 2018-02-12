@@ -14,7 +14,7 @@ function updateSession(tableSvc, acidata) {
         const aciData = {
             PartitionKey: acidata.resourceGroup,
             RowKey: acidata.containerGroupName,
-            ActiveSessions: acidata.activeSessions
+            ActiveSessions: Number(acidata.activeSessions)
         };
         tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
             if (error) {
@@ -25,15 +25,6 @@ function updateSession(tableSvc, acidata) {
         });
     });
 }
-
-//ACI Data is like
-/*
-const acidata = [{
-    resourceGroup: '',
-    containerGroupName: '',
-    activeSessions: 5
-}];
-*/
 
 function setSessions(body) {
     return new Promise(function (resolve, reject) {
@@ -50,27 +41,27 @@ function setSessions(body) {
     });
 }
 
-function deleteContainerGroup(body) {
-    return new Promise(function (resolve, reject) {
-        MsRest.loginWithServicePrincipalSecret(
-            clientId,
-            secret,
-            domain,
-            (err, credentials) => {
-                if (err) throw err;
+// function deleteContainerGroup(body) {
+//     return new Promise(function (resolve, reject) {
+//         MsRest.loginWithServicePrincipalSecret(
+//             clientId,
+//             secret,
+//             domain,
+//             (err, credentials) => {
+//                 if (err) throw err;
 
-                let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+//                 let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
-                    .then(response => {
-                        resolve(JSON.stringify(response));
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            });
-    });
-}
+//                 client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
+//                     .then(response => {
+//                         resolve(JSON.stringify(response));
+//                     })
+//                     .catch(err => {
+//                         reject(err);
+//                     });
+//             });
+//     });
+// }
 
 module.exports = {
     setSessions

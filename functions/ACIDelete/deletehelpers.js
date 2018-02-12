@@ -16,12 +16,9 @@ function setInTableAsDeleting(body) {
                 if (error) {
                     reject(error);
                 } else {
-                    //schema definitions https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions
-                    const resourceGroup = body.resourceGroup;
-                    const resourceId = body.containerGroupName;
                     const aciData = {
-                        PartitionKey: resourceGroup,
-                        RowKey: resourceId,
+                        PartitionKey: body.resourceGroup,
+                        RowKey: body.containerGroupName,
                         State: constants.deletingState
                     };
                     //there is a small chance that the entity will have been deleted before the following code runs
@@ -37,7 +34,7 @@ function setInTableAsDeleting(body) {
                             });
 
                         } else { //no entity found
-                            resolve(`Not set in table as Deleting for Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey} as it does not exist on the table`);
+                            resolve(`Not set state as Deleting for Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey} as it does not exist on the table`);
                         }
                     });
 
