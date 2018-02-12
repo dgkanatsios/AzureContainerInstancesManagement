@@ -24,14 +24,16 @@ function modifyTable(context, eventGridEvent) {
                         RowKey: resourceId,
                         State: eventGridEvent.data.status
                     };
+                    //ACI up and running
                     if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteSuccess') {
-                        tableSvc.replaceEntity(tableName, aciData, function (error, result, response) {
+                        tableSvc.insertOrReplaceEntity(tableName, aciData, function (error, result, response) {
                             if (error) {
                                 reject(error);
                             } else {
                                 resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
                             }
                         });
+                        //ACI creation failed
                     } else if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteFailure' ||
                         eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteCancel') {
                         aciData.State = constants.failedState;
