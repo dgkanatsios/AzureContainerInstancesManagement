@@ -18,4 +18,4 @@ module.exports = function (context, myTimer) {
     });
 };
 
-//runs every minute
+//runs every 5'
