@@ -1,9 +1,9 @@
 const utilities = require('../shared/utilities');
-const markfordeletionhelpers = require('./markfordeletionhelpers');
+const setstatehelpers = require('./setstatehelpers');
 
 module.exports = function (context, req) {
-    if (utilities.validatePostData(req.body)) {
-        markfordeletionhelpers.setStateAsMarkedForDeletion(req.body).catch(error => {
+    if (utilities.validateSetStateData(req.body)) {
+        setstatehelpers.setState(req.body).catch(error => {
             utilities.setErrorAndCloseContext(context, error, 500);
         }).then(() => {
             context.res = {
@@ -21,6 +21,9 @@ module.exports = function (context, req) {
 /*
 const acidata = [{
     resourceGroup: '',
-    containerGroupName: ''
+    containerGroupName: '',
+    state:'MarkedForDeletion'
 }];
+
+//state is either MarkedForDeletion or Failed
 */

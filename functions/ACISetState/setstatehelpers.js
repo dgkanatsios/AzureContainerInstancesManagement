@@ -3,7 +3,7 @@ const constants = require('../shared/constants');
 const tableName = constants.tableName;
 
 
-function setStateAsMarkedForDeletion(body) {
+function setState(body) {
     return new Promise(function (resolve, reject) {
         const tableSvc = azurestorage.createTableService();
         tableSvc.createTableIfNotExists(tableName,
@@ -14,13 +14,13 @@ function setStateAsMarkedForDeletion(body) {
                     const aciData = {
                         PartitionKey: body.resourceGroup,
                         RowKey: body.containerGroupName,
-                        State: constants.markedForDeletionState
+                        State: body.state
                     };
                     tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(`Marked for deletion Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey}`);
+                            resolve(`Set state ${aciData.State} to Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey}`);
                         }
                     });
                 }
@@ -30,5 +30,5 @@ function setStateAsMarkedForDeletion(body) {
 }
 
 module.exports = {
-    setStateAsMarkedForDeletion
+    setState
 };

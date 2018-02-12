@@ -1,6 +1,16 @@
+const constants = require('./constants');
+
 module.exports = {
     validatePostData: function (body) {
         if (body.resourceGroup && body.containerGroupName)
+            return true;
+        else
+            return false;
+    },
+
+    validateSetStateData: function (body) {
+        if (body.resourceGroup && body.containerGroupName && body.state 
+            && (body.state === constants.markedForDeletionState || body.state === constants.failedState))
             return true;
         else
             return false;
