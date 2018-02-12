@@ -28,3 +28,13 @@ Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-reso
 
 #### How can I troubleshoot my Azure Container Instances?
 As always, Azure documentation is your friend, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-troubleshooting).
+
+#### How can I test the Functions?
+Not direct Function testing on this project (yet), however you can see a testing file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
+
+- SUBSCRIPTIONID = ''
+- CLIENTID = ''
+- CLIENTSECRET = ''
+- TENANT = ''
+- AZURE_STORAGE_ACCOUNT = ''
+- AZURE_STORAGE_ACCESS_KEY = ''

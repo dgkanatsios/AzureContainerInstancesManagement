@@ -1,0 +1,19 @@
+{
+  "name": "_test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "_test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "azure-arm-containerinstance": "^1.2.0-preview",
+    "azure-arm-website": "^3.0.0-preview",
+    "azure-storage": "^2.8.0",
+    "dotenv": "^5.0.0",
+    "ms-rest-azure": "^2.5.2"
+  }
+}

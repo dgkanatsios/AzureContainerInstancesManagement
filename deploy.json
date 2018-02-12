@@ -32,20 +32,6 @@
                 "description": "Service Principal Secret which can be used by functions to create Azure Container Groups"
             }
         },
-        "DefaultDockerImage": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "If you want Azure Container Groups to be deployed with default Docker image, specify it in this parameter. You can override it during deployment of specific Azure Container Group"
-            }
-        },
-        "Ports": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Specify the ports your Docker image needs, separated by comma (,). You can override this during deployment of specific Azure Container Image"
-            }
-        },
         "repoUrl": {
             "type": "string",
             "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
@@ -104,12 +90,6 @@
                     },
                     "ClientSecret": {
                         "value": "[parameters('ClientSecret')]"
-                    },
-                    "DefaultDockerImage": {
-                        "value": "[parameters('DefaultDockerImage')]"
-                    },
-                    "Ports": {
-                        "value": "[parameters('Ports')]"
                     },
                     "functionName": {
                         "value": "[parameters('functionName')]"

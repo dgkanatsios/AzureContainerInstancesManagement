@@ -7,23 +7,40 @@ module.exports = {
     },
 
     //Sample create post data
-    // ports, memoryInGB and cpu are optional
     /*
-    {
-        resourceGroup: "acitest",
-        containerGroupName: "cigroup",
-        containerInstanceName: "ciname",
+     {
+    resourceGroup: "acitest123",
+    containerGroupName: "cigroup",
+    containerGroup : {
         location: "eastus",
-        osType: "Linux",
-        dockerImage: "dgkanatsios/simpleapp",
-        ports: "8080,8081",
-        memoryInGB: 0.5,
-        cpu: 0.5 
+        containers: [{
+            name: "ciname",
+            image: "dgkanatsios/simpleapp", 
+            resources: {
+                requests: {
+                    memoryInGB: 0.5,
+                    cpu: 0.5
+                }
+            },
+            ports: [{
+                protocol: 'TCP',
+                port: 8080
+            }]
+        }],
+        ipAddress: {
+            ports: [{
+                protocol: 'TCP',
+                port: 8080
+            }],
+            type: 'Public'
+        },
+        osType: 'Linux',
     }
+}
     */
     validateCreatePostData: function (body) {
-        if (body.resourceGroup && body.containerGroupName && body.containerInstanceName && body.location && body.osType &&
-            body.dockerImage)
+        if (body.resourceGroup && body.containerGroupName && body.containerGroup && body.containerGroup.location &&
+            body.containerGroup.containers && body.containerGroup.osType)
             return true;
         else
             return false;

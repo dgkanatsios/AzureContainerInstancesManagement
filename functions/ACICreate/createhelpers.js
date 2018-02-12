@@ -41,12 +41,7 @@ function insertIntoTable(body) {
                                 }
                             });
                         }
-
-
                     });
-
-
-
                 }
             });
     });
@@ -61,36 +56,9 @@ function createContainerGroup(body) {
             (err, credentials) => {
                 if (err) throw err;
 
-                const ports = (body.ports || process.env.DOCKERPORTS).toString().split(',').map(function (x) {
-                    return {
-                        protocol: 'TCP',
-                        port: Number(x)
-                    }
-                });
-
-                const containerGroup = {
-                    location: body.location,
-                    containers: [{
-                        name: body.containerInstanceName,
-                        image: body.dockerImage || process.env.DOCKERIMAGE,
-                        resources: {
-                            requests: {
-                                memoryInGB: body.memoryInGB || constants.defaultMemory,
-                                cpu: body.cpu || constants.defaultCPU
-                            }
-                        },
-                        ports: ports
-                    }],
-                    ipAddress: {
-                        ports: ports,
-                        type: 'Public'
-                    },
-                    osType: body.osType,
-                };
-
                 let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, containerGroup)
+                client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, body.containerGroup)
                     .then(response => resolve(JSON.stringify(response)))
                     .catch(err => reject(err));
             });
