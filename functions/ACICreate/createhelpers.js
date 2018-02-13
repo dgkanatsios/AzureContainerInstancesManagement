@@ -58,10 +58,25 @@ function createContainerGroup(body) {
 
                 let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
+                addReportSessionsUrlEnvVariable(body.containerGroup);
+
                 client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, body.containerGroup)
                     .then(response => resolve(JSON.stringify(response)))
                     .catch(err => reject(err));
             });
+    });
+}
+
+function addReportSessionsUrlEnvVariable(containerGroup) {
+    //add REPORTSESSIONSURL
+    containerGroup.containers.forEach(function (container) {
+        if (!(container.environmentVariables))
+            container.environmentVariables = [];
+
+        container.environmentVariables.push({
+            name: 'REPORTSESSIONSURL',
+            value: process.env.REPORTSESSIONSURL
+        });
     });
 }
 

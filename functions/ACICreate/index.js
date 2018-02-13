@@ -28,7 +28,10 @@ let samplePostData = {
         containers: [{
             name: "ciname",
             image: "dgkanatsios/simpleapp",
-            environmentVariables: [],
+            environmentVariables: [{
+                name:'envName',
+                value:'envValue'
+            }],
             resources: {
                 requests: {
                     memoryInGB: 0.5,
