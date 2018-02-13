@@ -2,7 +2,6 @@
 	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
 	"contentVersion": "1.0.0.0",
 	"variables": {
-		"hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]",
 		"serverFarmResourceGroup": "[resourceGroup().id]",
 		"workerSize": "0",
 		"subscriptionId": "[subscription().subscriptionId]",
@@ -23,6 +22,9 @@
 			"type": "string"
 		},
 		"repoUrl": {
+			"type": "string"
+		},
+		"hostingPlanName": {
 			"type": "string"
 		}
 	},
@@ -55,11 +57,11 @@
 		},
 		{
 			"apiVersion": "2016-09-01",
-			"name": "[variables('hostingPlanName')]",
+			"name": "[parameters('hostingPlanName')]",
 			"type": "Microsoft.Web/serverfarms",
 			"location": "[parameters('location')]",
 			"properties": {
-				"name": "[variables('hostingPlanName')]",
+				"name": "[parameters('hostingPlanName')]",
 				"workerSizeId": "[variables('workerSize')]",
 				"reserved": false,
 				"numberOfWorkers": "1",
@@ -77,42 +79,42 @@
 			"properties": {
 				"name": "[parameters('functionName')]",
 				"clientAffinityEnabled": false,
-				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
 				"siteConfig": {
-                    "appSettings": [{
-                            "name": "AzureWebJobsDashboard",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
-                        },
-                        {
-                            "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
-                        },
-                        {
-                            "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~1"
-                        },
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "6.5.0"
-                        },
-                        {
-                            "name": "NODE_ENV",
-                            "value": "production"
-                        },
-                        {
-                            "name":"APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value":"[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]"
+					"appSettings": [{
+							"name": "AzureWebJobsDashboard",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
 						},
 						{
-                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[toLower(parameters('functionName'))]"
-                        }
-                    ]
-                }				
+							"name": "AzureWebJobsStorage",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
+						},
+						{
+							"name": "FUNCTIONS_EXTENSION_VERSION",
+							"value": "~1"
+						},
+						{
+							"name": "WEBSITE_NODE_DEFAULT_VERSION",
+							"value": "6.5.0"
+						},
+						{
+							"name": "NODE_ENV",
+							"value": "production"
+						},
+						{
+							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+							"value": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]"
+						},
+						{
+							"name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
+						},
+						{
+							"name": "WEBSITE_CONTENTSHARE",
+							"value": "[toLower(parameters('functionName'))]"
+						}
+					]
+				}
 			},
 			"resources": [{
 				"apiVersion": "2015-08-01",
@@ -128,7 +130,7 @@
 				}
 			}],
 			"dependsOn": [
-				"[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
+				"[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
 				"[resourceId('Microsoft.Storage/storageAccounts', parameters('storageName'))]",
 				"[resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName'))]"
 			],

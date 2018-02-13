@@ -61,6 +61,9 @@
                     },
                     "repoUrl": {
                         "value": "[parameters('repoUrl')]"
+                    },
+                    "hostingPlanName": {
+                        "value": "[variables('hostingPlanName')]"
                     }
                 }
             }
