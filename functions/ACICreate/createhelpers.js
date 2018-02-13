@@ -56,7 +56,7 @@ function createContainerGroup(body) {
             (err, credentials) => {
                 if (err) throw err;
 
-                let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+                const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
                 addReportSessionsUrlEnvVariable(body.containerGroup);
 

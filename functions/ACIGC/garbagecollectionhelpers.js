@@ -34,7 +34,7 @@ function deleteAllMarkedForDeletionWithZeroSessions() {
             return Promise.all(entries.map(entry => {
                 return deleteSingleMarkedForDeletionWithZeroSessions(entry);
             }));
-        }).then(() => resolve('Delete all OK')).catch(err => reject(err));
+        }).then((res) => resolve(`Deleted ${JSON.stringify(res)}`)).catch(err => reject(err));
     });
 }
 
@@ -57,7 +57,7 @@ function deleteSingleMarkedForDeletionWithZeroSessions(entry) {
             if (err) {
                 reject(err);
             } else if (response) {
-                resolve('Delete OK');
+                resolve(`${JSON.stringify(aciData)}`);
             }
         });
     });

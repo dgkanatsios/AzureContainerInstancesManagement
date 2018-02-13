@@ -20,7 +20,7 @@ module.exports = function (context, req) {
 
 
 //Sample create POST data
-let samplePostData = {
+const samplePostData = {
     resourceGroup: "acitest123",
     containerGroupName: "cigroup",
     containerGroup: {

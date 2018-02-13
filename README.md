@@ -10,7 +10,22 @@ Manage Azure Container Instances using Azure Functions. Click the following butt
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-Currently, the deployment fails due to [this](https://github.com/dgkanatsios/AzureContainerInstancesManagement/issues/5) issue. You need to add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).
+*Currently, the deployment fails due to [this](https://github.com/dgkanatsios/AzureContainerInstancesManagement/issues/5) issue. You need to add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).*
+
+This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/). It contains 7 functions:
+
+- **ACICreate**: Creates a new Azure Container Group
+- **ACIDelete**: Deletes a Container Group
+- **ACIDetails**: Gets details/logs for a Container Group/Container
+- **ACIGC**: Runs every 5', removes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
+- **ACIMonitor**: Responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed
+- **ACIReportSessions**: Reports the running sessions for each Container Group
+- **ACISetState**: Sets the state of the Container Group (2 options are 'MarkedForDeletion' and 'Failed')
+
+These functions are supposed to be called by an external service (for a game, this would be the matchmaking service).
+
+## Inspiration
+This project was heavily inspired by a similar project that deals with VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
 
 ## FAQ
 

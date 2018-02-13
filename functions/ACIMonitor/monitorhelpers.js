@@ -14,7 +14,7 @@ function getPublicIP(resourceGroup, containerGroupName){
             (err, credentials) => {
                 if (err) throw err;
 
-                let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+                const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
                 client.containerGroups.get(resourceGroup, containerGroupName)
                     .then(response => {
