@@ -47,14 +47,9 @@ function modifyTable(context, eventGridEvent) {
                                 resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
                             }
                         });
-                    } else if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceDeleteSuccess') {
-                        tableSvc.deleteEntity(tableName, aciData, function (error, result, response) {
-                            if (error) {
-                                reject(error);
-                            } else {
-                                resolve(`Deleted ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey}`);
-                            }
-                        });
+                    } else  {
+                        //context.log(eventGridEvent);
+                        resolve(`Event with type ${eventGridEvent.eventType} arrived and was unhandled`);
                     }
                 }
             });
@@ -63,13 +58,13 @@ function modifyTable(context, eventGridEvent) {
 
 
 module.exports = function (context, eventGridEvent) {
-    context.log(eventGridEvent);
+    //context.log(eventGridEvent);
     if (eventGridEvent.data.resourceProvider === 'Microsoft.ContainerInstance') {
         modifyTable(context, eventGridEvent).then(result => {
             context.log(result);
+            context.done();
         }).catch(error => {
             context.log(error);
-        }).then(() => {
             context.done();
         });
     } else {

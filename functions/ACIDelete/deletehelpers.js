@@ -8,7 +8,7 @@ const secret = process.env.CLIENTSECRET;
 const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
-function setInTableAsDeleting(body) {
+function deleteACIFromTable(body) {
     return new Promise(function (resolve, reject) {
         const tableSvc = azurestorage.createTableService();
         tableSvc.createTableIfNotExists(tableName,
@@ -18,23 +18,14 @@ function setInTableAsDeleting(body) {
                 } else {
                     const aciData = {
                         PartitionKey: body.resourceGroup,
-                        RowKey: body.containerGroupName,
-                        State: constants.deletingState
+                        RowKey: body.containerGroupName
                     };
                     //there is a small chance that the entity will have been deleted before the following code runs
-                    tableSvc.retrieveEntity(tableName, aciData.PartitionKey, aciData.RowKey, function (error, result, response) {
-                        if (!error) {
-                            //result contains the entity
-                            tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
-                                if (error) {
-                                    reject(error);
-                                } else {
-                                    resolve(`Updated Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey}`);
-                                }
-                            });
-
-                        } else { //no entity found
-                            resolve(`Not set state as Deleting for Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey} as it does not exist on the table`);
+                    tableSvc.deleteEntity(tableName, aciData, function (error, result, response) {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(`Deleted ID ${aciData.RowKey} and ResourceGroup ${aciData.PartitionKey}`);
                         }
                     });
 
@@ -67,5 +58,5 @@ function deleteContainerGroup(body) {
 
 module.exports = {
     deleteContainerGroup,
-    setInTableAsDeleting
+    deleteACIFromTable
 };

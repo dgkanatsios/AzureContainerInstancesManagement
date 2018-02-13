@@ -5,7 +5,7 @@ const deletehelpers = require('./deletehelpers');
 module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
         deletehelpers.deleteContainerGroup(req.body).then(() => {
-            return deletehelpers.setInTableAsDeleting(req.body);
+            return deletehelpers.deleteACIFromTable(req.body);
         }).then(() => {
             context.res = 'Delete OK';
             context.done();

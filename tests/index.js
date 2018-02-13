@@ -96,7 +96,7 @@ if (utilities.validatePostData(body)) {
     runGC();
     //monitorhelpers.getPublicIP(body.resourceGroup, body.containerGroupName).then((ip) => console.log(ip)).catch(err => console.log(err)).then(() => console.log("IP GET OK"));
     //reportsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
-    //deletehelpers.deleteContainerGroup(deleteBody).then(() => deletehelpers.setInTableAsDeleting(deleteBody)).catch(error => console.log(error)).then(() => console.log('Done'));
+    //deletehelpers.deleteContainerGroup(deleteBody).then(() => deletehelpers.deleteACIFromTable(deleteBody)).catch(error => console.log(error)).then(() => console.log('Done'));
 }
 
 function setState(body) {
