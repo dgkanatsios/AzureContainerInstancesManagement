@@ -1,7 +1,6 @@
 const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 const tableName = constants.tableName;
-const ACIDeleteFunctionURL = process.env.ACIDELETEURL;
 const request = require('../shared/external').request;
 
 const tableSvc = azurestorage.createTableService();
@@ -45,8 +44,9 @@ function deleteSingleMarkedForDeletionWithZeroSessions(entry) {
             resourceGroup: entry.PartitionKey._, //yup, _ gives the value (...)
             containerGroupName: entry.RowKey._ 
         };
+
         request({
-            url: process.env.ACIDeleteFunctionURL,
+            url: process.env.ACIDELETEURL,
             json: aciData,
             method: 'POST',
             maxAttempts: 5, // (default) try 5 times

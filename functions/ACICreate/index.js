@@ -4,9 +4,9 @@ const utilities = require('../shared/utilities');
 module.exports = function (context, req) {
     if (utilities.validateCreatePostData(req.body)) {
         createhelpers.createContainerGroup(req.body).then(() => createhelpers.insertIntoTable(req.body))
-            .then(() => {
+            .then((res) => {
                 context.res = {
-                    body: 'Create OK'
+                    body: res
                 };
                 context.done();
             })

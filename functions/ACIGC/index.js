@@ -1,4 +1,3 @@
-const utilities = require('../shared/utilities');
 const garbagecollectionhelpers = require('./garbagecollectionhelpers');
 
 module.exports = function (context, myTimer) {
@@ -9,12 +8,12 @@ module.exports = function (context, myTimer) {
     }
     context.log('Node.js timer trigger function ran!', timeStamp);
     garbagecollectionhelpers.deleteAllMarkedForDeletionWithZeroSessions().then(
-        () => {
-            context.log('delete all OK');
-            context.done()
+        (res) => {
+            context.log(res);
+            context.done();
         }).catch(err => {
         context.error(err);
-        context.done()
+        context.done();
     });
 };
 

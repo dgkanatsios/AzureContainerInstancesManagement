@@ -4,7 +4,7 @@
     "variables": {
         "storageName": "[concat(uniqueString(parameters('functionName')), 'storage')]",
         "acidetailsStorageName": "[concat(uniqueString(parameters('functionName')), 'acidetails')]",
-        "hostingPlanName": "[concat(toLower(parameters('functionName')), 'freeplan')]"
+        "hostingPlanName": "[concat(toLower(parameters('functionName')), 'hostingplan')]"
     },
     "parameters": {
         "functionName": {

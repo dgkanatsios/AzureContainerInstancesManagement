@@ -5,9 +5,9 @@ module.exports = function (context, req) {
     if (utilities.validateReportSessionsData(req.body)) {
         reportsessionshelpers.setSessions(req.body).catch(error => {
             utilities.setErrorAndCloseContext(context, error, 500);
-        }).then(() => {
+        }).then((res) => {
             context.res = {
-                body: 'Report sessions OK'
+                body: res
             };
             context.done();
         });

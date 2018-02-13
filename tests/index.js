@@ -124,6 +124,6 @@ function createACI(body) {
 }
 
 function runGC() {
-    //remember to set properly
-    garbagecollectionhelpers.deleteAllMarkedForDeletionWithZeroSessions().then((res) => console.log(res));
+    //remember to set process.env.ACIDELETEURL properly
+    garbagecollectionhelpers.deleteAllMarkedForDeletionWithZeroSessions().then((res) => console.log(res)).catch(err=>console.log(err));
 }

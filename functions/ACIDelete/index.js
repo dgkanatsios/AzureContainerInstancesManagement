@@ -6,8 +6,8 @@ module.exports = function (context, req) {
     if (utilities.validatePostData(req.body)) {
         deletehelpers.deleteContainerGroup(req.body).then(() => {
             return deletehelpers.deleteACIFromTable(req.body);
-        }).then(() => {
-            context.res = 'Delete OK';
+        }).then((res) => {
+            context.res = res;
             context.done();
         }).catch(error => {
             context.error(error);

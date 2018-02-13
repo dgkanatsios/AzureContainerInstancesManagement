@@ -68,6 +68,7 @@ module.exports = function (context, eventGridEvent) {
             context.done();
         });
     } else {
+        context.log(`Received event from RP ${eventGridEvent.data.resourceProvider} was unhandled`);
         context.done();
     }
 };
