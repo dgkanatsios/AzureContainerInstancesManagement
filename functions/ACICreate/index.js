@@ -37,13 +37,13 @@ let samplePostData = {
             },
             ports: [{
                 protocol: 'TCP',
-                port: 8080
+                port: 80
             }]
         }],
         ipAddress: {
             ports: [{
                 protocol: 'TCP',
-                port: 8080
+                port: 80
             }],
             type: 'Public'
         },

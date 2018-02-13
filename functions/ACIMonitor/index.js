@@ -1,4 +1,4 @@
-const azurestorage = require('azure-storage');
+const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 const monitorhelpers = require('./monitorhelpers');
 

@@ -9,6 +9,9 @@ const deletehelpers = require('../functions/ACIDelete/deletehelpers');
 const createhelpers = require('../functions/ACICreate/createhelpers');
 const reportsessionshelpers = require('../functions/ACIReportSessions/reportsessionshelpers');
 const monitorhelpers = require('../functions/ACIMonitor/monitorhelpers');
+const detailshelpers = require('../functions/ACIDetails/detailshelpers');
+const setstatehelpers = require('../functions/ACISetState/setstatehelpers');
+const garbagecollectionhelpers = require('../functions/ACIGC/garbagecollectionhelpers');
 
 function queryAppService(resourceGroup, credentials, subscriptionId) {
     let webSiteClient = new WebSiteManagementClient(credentials, subscriptionId);
@@ -47,13 +50,13 @@ let body = {
             },
             ports: [{
                 protocol: 'TCP',
-                port: 8080
+                port: 80
             }]
         }],
         ipAddress: {
             ports: [{
                 protocol: 'TCP',
-                port: 8080
+                port: 80
             }],
             type: 'Public'
         },
@@ -72,12 +75,44 @@ const sessions = [{
     activeSessions: 5
 }];
 
+const detailsBody = {
+    resourceGroup: "acitest123",
+    containerGroupName: "cigroup2",
+    type: "logs",
+    containerName: "ciname"
+};
+
+const setStateBody = {
+    resourceGroup: "acitest123",
+    containerGroupName: "cigroup2",
+    state: "MarkedForDeletion"
+};
+
 if (utilities.validatePostData(body)) {
 
-    createACI(body);
+    //createACI(body);
+    //getDetails(detailsBody);
+    //setState(setStateBody);
+    runGC();
     //monitorhelpers.getPublicIP(body.resourceGroup, body.containerGroupName).then((ip) => console.log(ip)).catch(err => console.log(err)).then(() => console.log("IP GET OK"));
     //reportsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
     //deletehelpers.deleteContainerGroup(deleteBody).then(() => deletehelpers.setInTableAsDeleting(deleteBody)).catch(error => console.log(error)).then(() => console.log('Done'));
+}
+
+function setState(body) {
+    if (utilities.validateSetStateData(body)) {
+        setstatehelpers.setState(body).then(res => console.log(res)).catch(err => console.log(err));
+    } else {
+        console.log('invalid post data');
+    }
+}
+
+function getDetails(body) {
+    if (utilities.validatePostData) {
+        detailshelpers.getContainerGroupDetails(body).then(res => console.log(res)).catch(err => console.log(err));
+    } else {
+        console.log('invalid post data');
+    }
 }
 
 function createACI(body) {
@@ -86,4 +121,9 @@ function createACI(body) {
     } else {
         console.log('invalid post data');
     }
+}
+
+function runGC() {
+    //remember to set properly
+    garbagecollectionhelpers.deleteAllMarkedForDeletionWithZeroSessions().then((res) => console.log(res));
 }

@@ -4,9 +4,10 @@ const tableName = constants.tableName;
 const ACIDeleteFunctionURL = process.env.ACIDELETEURL;
 const request = require('../shared/external').request;
 
+const tableSvc = azurestorage.createTableService();
+
 function getAllACIMarkedForDeletion() {
     return new Promise(function (resolve, reject) {
-        const tableSvc = azurestorage.createTableService();
         tableSvc.createTableIfNotExists(tableName,
             function (error, result, response) {
                 if (error) {
@@ -32,22 +33,22 @@ function deleteAllMarkedForDeletionWithZeroSessions() {
     return new Promise(function (resolve, reject) {
         getAllACIMarkedForDeletion().then(entries => {
             return Promise.all(entries.map(entry => {
-                return deleteMarkedForDeletionWithZeroSessions(entry);
+                return deleteSingleMarkedForDeletionWithZeroSessions(entry);
             }));
         }).then(() => resolve('Delete all OK')).catch(err => reject(err));
     });
 }
 
-function deleteMarkedForDeletionWithZeroSessions(entry) {
+function deleteSingleMarkedForDeletionWithZeroSessions(entry) {
     return new Promise(function (resolve, reject) {
+        const aciData = {
+            resourceGroup: entry.PartitionKey._, //yup, _ gives the value (...)
+            containerGroupName: entry.RowKey._ 
+        };
         request({
-            url: ACIDeleteFunctionURL,
-            json: true,
+            url: process.env.ACIDeleteFunctionURL,
+            json: aciData,
             method: 'POST',
-            form: {
-                resourceGroup: entry.PartitionKey,
-                containerGroupName: entry.RowKey
-            },
             maxAttempts: 5, // (default) try 5 times
             retryDelay: 5000, // (default) wait for 5s before trying again
             retryStrategy: request.RetryStrategies.HTTPOrNetworkError // (default) retry on 5xx or network errors

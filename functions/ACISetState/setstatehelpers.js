@@ -20,7 +20,7 @@ function setState(body) {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(`Set state ${aciData.State} to Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey}`);
+                            resolve(`Success in setting state '${aciData.State}' to Container Group with ID ${aciData.RowKey} on ResourceGroup ${aciData.PartitionKey}`);
                         }
                     });
                 }

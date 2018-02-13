@@ -19,14 +19,14 @@ function getContainerGroupDetails(body) {
                 let promise;
                 //see if client asked for logs
                 if (body.type && body.type === 'logs') {
-                    promise = client.containerLogs.list(body.resourceGroup, body.containerGroupName);
+                    promise = client.containerLogs.list(body.resourceGroup, body.containerGroupName, body.containerName);
                 } else {
                     promise = client.containerGroups.get(body.resourceGroup, body.containerGroupName)
                 }
 
 
                 promise.then(response => {
-                        resolve(response);
+                        resolve(JSON.stringify(response));
                     })
                     .catch(err => {
                         reject(err);

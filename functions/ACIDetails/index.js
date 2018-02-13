@@ -18,10 +18,21 @@ module.exports = function (context, req) {
 };
 
 //sample POST data
-//the request can optionally contain a type:"logs" property. In this case, the Function will retrieve the logs of the container group
+//the request can optionally contain a type:"logs" property. If this is the case, a "containerName" must be provided. 
+//Then the Function will retrieve the logs of the container on this container group
 /*
 {
     resourceGroup: "acitest123",
     containerGroupName: "cigroup"
+}
+
+
+or 
+
+{
+    resourceGroup: "acitest123",
+    containerGroupName: "cigroup2",
+    type:"logs",
+    containerName: "ciname"
 }
 */
