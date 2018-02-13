@@ -31,7 +31,7 @@ module.exports = {
             return false;
     },
 
-    validateReportSessionsData: function (body) {
+    validateSetSessionsData: function (body) {
         return Array.isArray(body);
     },
 

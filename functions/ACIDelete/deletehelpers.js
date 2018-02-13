@@ -20,7 +20,6 @@ function deleteACIFromTable(body) {
                         PartitionKey: body.resourceGroup,
                         RowKey: body.containerGroupName
                     };
-                    //there is a small chance that the entity will have been deleted before the following code runs
                     tableSvc.deleteEntity(tableName, aciData, function (error, result, response) {
                         if (error) {
                             reject(error);

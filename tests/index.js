@@ -7,7 +7,7 @@ const utilities = require('../functions/shared/utilities');
 
 const deletehelpers = require('../functions/ACIDelete/deletehelpers');
 const createhelpers = require('../functions/ACICreate/createhelpers');
-const reportsessionshelpers = require('../functions/ACIReportSessions/reportsessionshelpers');
+const setsessionshelpers = require('../functions/ACIsetSessions/setsessionshelpers');
 const monitorhelpers = require('../functions/ACIMonitor/monitorhelpers');
 const detailshelpers = require('../functions/ACIDetails/detailshelpers');
 const setstatehelpers = require('../functions/ACISetState/setstatehelpers');
@@ -95,7 +95,7 @@ if (utilities.validatePostData(body)) {
     //setState(setStateBody);
     runGC();
     //monitorhelpers.getPublicIP(body.resourceGroup, body.containerGroupName).then((ip) => console.log(ip)).catch(err => console.log(err)).then(() => console.log("IP GET OK"));
-    //reportsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
+    //setsessionshelpers.setSessions(sessions).catch(err => console.log(err)).then(() => console.log('Sessions update OK'));
     //deletehelpers.deleteContainerGroup(deleteBody).then(() => deletehelpers.deleteACIFromTable(deleteBody)).catch(error => console.log(error)).then(() => console.log('Done'));
 }
 

@@ -1,9 +1,9 @@
 const utilities = require('../shared/utilities');
-const reportsessionshelpers = require('./reportsessionshelpers');
+const setsessionshelpers = require('./setsessionshelpers');
 
 module.exports = function (context, req) {
-    if (utilities.validateReportSessionsData(req.body)) {
-        reportsessionshelpers.setSessions(req.body).catch(error => {
+    if (utilities.validateSetSessionsData(req.body)) {
+        setsessionshelpers.setSessions(req.body).catch(error => {
             utilities.setErrorAndCloseContext(context, error, 500);
         }).then((res) => {
             context.res = {

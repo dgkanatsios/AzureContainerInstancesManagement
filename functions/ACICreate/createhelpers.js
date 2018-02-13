@@ -58,7 +58,7 @@ function createContainerGroup(body) {
 
                 const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                addReportSessionsUrlEnvVariable(body.containerGroup);
+                addSetSessionsUrlEnvVariable(body.containerGroup);
 
                 client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, body.containerGroup)
                     .then(response => resolve(JSON.stringify(response)))
@@ -67,15 +67,15 @@ function createContainerGroup(body) {
     });
 }
 
-function addReportSessionsUrlEnvVariable(containerGroup) {
-    //add REPORTSESSIONSURL
+function addSetSessionsUrlEnvVariable(containerGroup) {
+    //add SETSESSIONSURL
     containerGroup.containers.forEach(function (container) {
         if (!(container.environmentVariables))
             container.environmentVariables = [];
 
         container.environmentVariables.push({
-            name: 'REPORTSESSIONSURL',
-            value: process.env.REPORTSESSIONSURL
+            name: 'SETSESSIONSURL',
+            value: process.env.SETSESSIONSURL
         });
     });
 }
