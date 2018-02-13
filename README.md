@@ -41,6 +41,19 @@ Azure Container Groups that are created can be in one of the below states:
 - **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the `ACIGC` function runs
 - **Failed**: When something has gone bad
 
+## Flow
+
+A typical flow of the app goes like this:
+
+1. External service calls `ACICreate`, so a new Container Group is created and is set to `Creating` state
+2. As soon as the Event Grid notification comes to `ACIMonitor` function, this means that the Container Group is ready so the `ACIMonitor` function inserts its public IP into Table Storage
+3. External service can call `ACIList` to get Container Groups in `Running` state as well as `ACIDetails` to get logs/details about the Container Group
+4. External service or the Docker containers themselves can call `ACISetSessions` to set running sessions count on Table Storage
+5. External Service can call `ACISetState` to set Container Group’s state as `MarkedForDeletion` when the Container Group is no longer needed
+6. Time triggered `ACIGC` (GC: Garbage Collector) will remove unwanted Container Groups (i.e. Container Groups that have 0 active/running sesions and are `MarkedForDeletion`)
+
+![alt text](media/states.png "States and Transition")
+
 ## FAQ
 
 #### What is this **.deployment** file at the root of the project?
