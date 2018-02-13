@@ -52,7 +52,7 @@ A typical flow of the app goes like this:
 5. External Service can call `ACISetState` to set Container Group’s state as `MarkedForDeletion` when the Container Group is no longer needed
 6. Time triggered `ACIGC` (GC: Garbage Collector) will remove unwanted Container Groups (i.e. Container Groups that have 0 active/running sesions and are `MarkedForDeletion`)
 
-![alt text](media/states.png "States and Transition")
+![alt text](media/states.jpg "States and Transition")
 
 ## FAQ
 
