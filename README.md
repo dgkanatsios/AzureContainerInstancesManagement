@@ -6,7 +6,7 @@
 # AzureContainerInstancesManagement
 *Work In Progress*
 
-Manage Azure Container Instances using Azure Functions.
+Manage Azure Container Instances using Azure Functions. We suppose that there is an external service that manages running instances (Container Groups) and schedules sessions on them.
 
 ## Inspiration
 This project was heavily inspired by a similar project that deals with VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
