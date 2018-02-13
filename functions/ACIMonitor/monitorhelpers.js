@@ -1,5 +1,5 @@
-const MsRest = require('ms-rest-azure');
-const ContainerInstanceManagementClient = require('azure-arm-containerinstance');
+const MsRest = require('../shared/external').MsRest;
+const ContainerInstanceManagementClient = require('../shared/external').ContainerInstanceManagementClient;
 const clientId = process.env.CLIENTID;
 const secret = process.env.CLIENTSECRET;
 const domain = process.env.TENANT;

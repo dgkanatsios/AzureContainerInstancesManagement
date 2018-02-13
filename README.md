@@ -6,10 +6,11 @@
 # AzureContainerInstancesManagement
 *Work In Progress*
 
-Manage Azure Container Instances using Azure Functions. Click here to deploy in your Azure subscription.
+Manage Azure Container Instances using Azure Functions. Click the following button to deploy in your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
+Currently, the deployment fails due to [this](https://github.com/dgkanatsios/AzureContainerInstancesManagement/issues/5) issue. You need to add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).
 
 ## FAQ
 

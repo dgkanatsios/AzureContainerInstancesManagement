@@ -1,4 +1,4 @@
-const azurestorage = require('azure-storage');
+const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 // const MsRest = require('ms-rest-azure');
  const tableName = constants.tableName;

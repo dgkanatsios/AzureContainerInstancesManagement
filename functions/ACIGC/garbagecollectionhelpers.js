@@ -1,8 +1,8 @@
-const azurestorage = require('azure-storage');
+const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 const tableName = constants.tableName;
 const ACIDeleteFunctionURL = process.env.ACIDELETEURL;
-const request = require('requestretry');
+const request = require('../shared/external').request;
 
 function getAllACIMarkedForDeletion() {
     return new Promise(function (resolve, reject) {
