@@ -17,9 +17,17 @@ function listRunningACIs(body) {
                             reject(error);
                         } else {
                             resolve(result.entries.map(entry => {
+
+                                let sessions = 0;
+                                if(entry.ActiveSessions){
+                                    sessions = entry.ActiveSessions._;
+                                }
+                                
                                 return {
                                     resourceGroup: entry.PartitionKey._, 
-                                    containerGroupName: entry.RowKey._
+                                    containerGroupName: entry.RowKey._,
+                                    PublicIP: entry.PublicIP._,
+                                    ActiveSessions: sessions 
                                 }
                             }));
                         }
