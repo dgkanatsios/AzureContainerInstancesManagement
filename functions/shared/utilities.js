@@ -45,6 +45,7 @@ module.exports = {
     },
 
     setErrorAndCloseContext(context, errorMessage, statusCode) {
+        context.log(`ERROR: ${errorMessage}`);
         context.res = {
             status: statusCode,
             body: errorMessage,
