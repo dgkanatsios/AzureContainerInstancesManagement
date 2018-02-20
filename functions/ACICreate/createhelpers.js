@@ -58,7 +58,7 @@ function createContainerGroup(body) {
 
                 const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                addSetSessionsUrlEnvVariable(body.containerGroup);
+                addEnvVariables(body.resourceGroup, body.containerGroupName, body.containerGroup);
 
                 client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, body.containerGroup)
                     .then(response => resolve(JSON.stringify(response)))
@@ -67,15 +67,21 @@ function createContainerGroup(body) {
     });
 }
 
-function addSetSessionsUrlEnvVariable(containerGroup) {
-    //add SETSESSIONSURL
+function addEnvVariables(resourceGroup, containerGroupName, containerGroup) {
+    //add SET_SESSIONS_URL, RESOURCE_GROUP, CONTAINER_GROUP_NAME
     containerGroup.containers.forEach(function (container) {
         if (!(container.environmentVariables))
             container.environmentVariables = [];
 
         container.environmentVariables.push({
-            name: 'SETSESSIONSURL',
-            value: process.env.SETSESSIONSURL
+            name: 'SET_SESSIONS_URL',
+            value: process.env.SET_SESSIONS_URL
+        }, {
+            name: 'RESOURCE_GROUP',
+            value: resourceGroup
+        }, {
+            name: 'CONTAINER_GROUP_NAME',
+            value: containerGroupName
         });
     });
 }

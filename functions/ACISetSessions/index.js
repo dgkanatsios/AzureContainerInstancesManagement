@@ -3,13 +3,13 @@ const setsessionshelpers = require('./setsessionshelpers');
 
 module.exports = function (context, req) {
     if (utilities.validateSetSessionsData(req.body)) {
-        setsessionshelpers.setSessions(req.body).catch(error => {
-            utilities.setErrorAndCloseContext(context, error, 500);
-        }).then((res) => {
+        setsessionshelpers.setSessions(req.body).then((res) => {
             context.res = {
                 body: res
             };
             context.done();
+        }).catch(error => {
+            utilities.setErrorAndCloseContext(context, error, 500);
         });
     } else {
         utilities.setErrorAndCloseContext(context, 'Need to specify array of object containing resourceGroup, containerGroupName, activeSessions', 400);

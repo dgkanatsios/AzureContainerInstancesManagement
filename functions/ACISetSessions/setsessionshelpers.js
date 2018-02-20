@@ -28,7 +28,7 @@ function setSessions(body) {
                 if (error) {
                     reject(error);
                 } else {
-                    Promise.all(body.map(x => updateSession(tableSvc, x))).then(() => resolve('Update OK'));
+                    Promise.all(body.map(x => updateSession(tableSvc, x))).then(() => resolve('Update OK')).catch(err=>reject(err));
                 }
             });
 

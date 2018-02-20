@@ -46,7 +46,7 @@ function deleteSingleMarkedForDeletionWithZeroSessions(entry) {
         };
 
         request({
-            url: process.env.ACIDELETEURL,
+            url: process.env.ACI_DELETE_URL,
             json: aciData,
             method: 'POST',
             maxAttempts: 5, // (default) try 5 times

@@ -54,8 +54,8 @@
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
                 "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
                 "AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
-                "SETSESSIONSURL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetSessions'),'2015-08-01').trigger_url]",
-                "ACIDELETEURL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIDelete'),'2015-08-01').trigger_url]",
+                "SET_SESSIONS_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetSessions'),'2015-08-01').trigger_url]",
+                "ACI_DELETE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIDelete'),'2015-08-01').trigger_url]",
                 "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
                 "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]"
             }
