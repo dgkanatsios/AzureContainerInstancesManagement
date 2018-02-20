@@ -102,23 +102,6 @@
                     }
                 }
             }
-        },
-        {
-            "name": "ACIMonitor",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2016-09-01",
-            "dependsOn": ["[resourceId('Microsoft.Resources/deployments', 'MainResources')]"],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.eventgridsubscription.json"
-                },
-                "parameters": {
-                    "functionName": {
-                        "value": "[parameters('functionName')]"
-                    }
-                }
-            }
         }
     ]
 }

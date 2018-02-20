@@ -1,10 +1,9 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![unofficial Google Analytics for GitHub](https://gaforgithub.azurewebsites.net/api?repo=AzureContainerInstancesManagement)](https://github.com/dgkanatsios/gaforgithub)
-![](https://img.shields.io/badge/status-alpha-red.svg)
+![](https://img.shields.io/badge/status-beta-orange.svg)
 
 # AzureContainerInstancesManagement
-*Work In Progress*
 
 Manage Azure Container Instances using Azure Functions. We suppose that there is an external service that manages running instances (Container Groups) and schedules sessions on them.
 
@@ -72,6 +71,9 @@ Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-reso
 #### How can I troubleshoot my Azure Container Instances?
 As always, Azure documentation is your friend, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-troubleshooting).
 
+#### How can I manage Keys for my Functions?
+Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API).
+
 #### How can I test the Functions?
 Not direct Function testing on this project (yet), however you can see a testing file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
 
@@ -81,3 +83,46 @@ Not direct Function testing on this project (yet), however you can see a testing
 - TENANT = ''
 - AZURE_STORAGE_ACCOUNT = ''
 - AZURE_STORAGE_ACCESS_KEY = ''
+
+## Demo
+We have created a Docker image of the popular game open source game [Teeworlds](https://www.teeworlds.com/) that can be used to demonstrate this project. Here are the steps that you could use if you wanted to set up a quick demo of the project:
+- Deploy the project (you can use one-click deployment, as described in the beginning).
+- Deploy the Event Grid subscription. You can either deploy the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json) file or use Azure portal or CLI ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription)). When you deploy, make sure that you're monitoring for **all** events either the Resource Group you're planning to create your Container Instances on or your entire subscription.
+- Call the ACICreate Function to create an Azure Container Instance with the dgkanatsios/docker-teeworlds image. You can get Function's key from the Azure Portal ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function)) and use the provided [Postman](https://www.getpostman.com/) file (located [here](various/ACIManagement.postman_collection.json)) to begin. POST body should be similar to (yeah, half a GB memory/CPU is more than enough):
+```javascript
+{
+    "resourceGroup": "teeworlds",
+    "containerGroupName": "teeserver1",
+    "containerGroup" : {
+        "location": "westeurope",
+        "containers": [{
+            "name": "teeserver1",
+            "image": "dgkanatsios/docker-teeworlds", 
+            "environmentVariables": [{
+                "name":"SERVER_NAME",
+                "value":"Azure-Dimitris-1"
+            }],
+            "resources": {
+                "requests": {
+                    "memoryInGB": 0.5,
+                    "cpu": 0.5
+                }
+            },
+            "ports": [{
+                "protocol": "udp",
+                "port": 8303
+            }]
+        }],
+        "ipAddress": {
+            "ports": [{
+                "protocol": "udp",
+                "port": 8303
+            }],
+            "type": "Public"
+        },
+        "osType": "Linux"
+    }
+}
+```
+- Once it's deployed, you will see an entry in your Azure Table. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. If Event Grid integration works, your instance should be in the **Running** stage, having a Public IP.
+- Call the ACIList Function to see your **Running** Container Instances. Get its IP, and try to connect to it using [Teeworlds client](https://www.teeworlds.com/?page=downloads). Hopefully this works, you have successfully set up your Teeworlds game server on Azure!
