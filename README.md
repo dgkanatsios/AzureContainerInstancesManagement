@@ -84,11 +84,15 @@ Not direct Function testing on this project (yet), however you can see a testing
 - AZURE_STORAGE_ACCOUNT = ''
 - AZURE_STORAGE_ACCESS_KEY = ''
 
+#### How can I monitor Event Grid message delivery?
+Check [here](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery).
+
 ## Demo
 We have created a Docker image of the popular game open source game [Teeworlds](https://www.teeworlds.com/) that can be used to demonstrate this project. Here are the steps that you could use if you wanted to set up a quick demo of the project:
-- Deploy the project (you can use one-click deployment, as described in the beginning).
-- Deploy the Event Grid subscription. You can either deploy the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json) file or use Azure portal or CLI ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription)). When you deploy, make sure that you're monitoring for **all** events either the Resource Group you're planning to create your Container Instances on or your entire subscription.
-- Call the ACICreate Function to create an Azure Container Instance with the dgkanatsios/docker-teeworlds image. You can get Function's key from the Azure Portal ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function)) and use the provided [Postman](https://www.getpostman.com/) file (located [here](various/ACIManagement.postman_collection.json)) to begin. POST body should be similar to (yeah, half a GB memory/CPU is more than enough):
+- You need to create an Azure Service Principal. This is an identity that has permission to create/update/delete Azure Resources. Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to do it from the Azure Portal.
+- Deploy the project in your Azure subscription (you can use one-click deployment, as described in the beginning).
+- Deploy the Event Grid subscription for the **ACIMonitor** Function. You can either deploy the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json) file (via the portal, ask to create a resource via `Template Deployment`) or use Azure portal or CLI directly to the **ACIMonitor** Function ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription)). When you deploy, make sure that you're monitoring **all** events on either the Resource Group you're planning to create your Container Instances on or your entire subscription.
+- Call the **ACICreate** Function to create an Azure Container Instance with the dgkanatsios/docker-teeworlds image. You can get Function's key from the Azure Portal ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function)) and use the provided [Postman](https://www.getpostman.com/) file (located [here](various/ACIManagement.postman_collection.json)) to begin. POST body should be similar to (yeah, half a GB memory/CPU is more than enough):
 ```javascript
 {
     "resourceGroup": "teeworlds",
@@ -124,5 +128,29 @@ We have created a Docker image of the popular game open source game [Teeworlds](
     }
 }
 ```
-- Once it's deployed, you will see an entry in your Azure Table. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. If Event Grid integration works, your instance should be in the **Running** stage, having a Public IP.
-- Call the ACIList Function to see your **Running** Container Instances. Get its IP, and try to connect to it using [Teeworlds client](https://www.teeworlds.com/?page=downloads). Hopefully this works, you have successfully set up your Teeworlds game server on Azure!
+- Once it's deployed, you will see an entry in your Azure Table. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. If Event Grid integration works, your instance should be in the **Running** stage, having a Public IP. The Storage account that contains this Table should have a name similar to `RANDOM_STRINGacidetails`.
+- Call the **ACIList** Function to see your **Running** Container Instances. If result is something like the below, you have successfully set up your Teeworlds game server on Azure!
+```javascript
+[
+    {
+        "resourceGroup": "teeworlds",
+        "containerGroupName": "teeserver1",
+        "PublicIP": "168.63.121.114",
+        "ActiveSessions": 0
+    }
+]
+```
+- You can use this IP to connect to the Teeworlds server you just set up. Download the [Teeworlds client](https://www.teeworlds.com/?page=downloads) and connect to it.
+- If you now check your Table Storage (or call the **ACIList** Function again), you should see that ActiveSessions are 1. This number should increase as more clients connect to your container server. This happens because the `dgkanatsios/docker-teeworlds` image is configured to call the **ACISetSessions** Function when a user connects/disconnect to the server.
+- To get the logs from your server, use the **ACIDetails** Function. If you omit the `type:"logs"` from the POST body, you should see the Azure Resource details for your container.
+- Now, suppose that you do not need this container instance any more. You may call **ACIDelete** Function, but there may be players that are currently playing the game. Of course, you do not want to ruin their experience, right? What you can do is call the **ACISetState** Function and set the container's state to `MarkedForDeletion`. That would be the POST body:
+```javascript
+{
+    resourceGroup: "teworlds",
+    containerGroupName: "teeserver1",
+    state:"MarkedForDeletion"
+}
+```
+Of course, we suppose that since it's `MarkedForDeletion`, no other games will be scheduled on this container.
+- The **ACIGC** Function, which is being triggered in specific time intervals, will eventually kick-in and delete your Container Group resource when a) it's 'MarkedForDeletion' and b) it has 0 active sessions.
+- To cleanup, you should release the Resource Group(s) to where you deployed your resources to as well as your Event Grid Subscriptions. To find them, use [this](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery#event-subscription-status) article.
