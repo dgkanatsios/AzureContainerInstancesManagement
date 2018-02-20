@@ -5,7 +5,7 @@
 
 # AzureContainerInstancesManagement
 
-Manage Azure Container Instances using Azure Functions. We suppose that there is an external service that manages running instances (Container Groups) and schedules sessions on them.
+Manage Azure Container Instances using Azure Functions. We suppose that there is an external service that manages running instances (Container Groups) and schedules sessions on them. `Sessions` could be anything that has a fixed lifetime, like multiplayer game sessions.
 
 ## Inspiration
 This project was heavily inspired by a similar project that deals with VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
@@ -16,7 +16,7 @@ Click the following button to deploy in your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-*Currently, the deployment fails due to [this](https://github.com/dgkanatsios/AzureContainerInstancesManagement/issues/5) issue. You need to add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).*
+As soon as the deployment completes, you need to manually add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).
 
 ## Technical details
 
@@ -25,8 +25,8 @@ This project allows you to manage [Azure Container Instances](https://azure.micr
 - **ACICreate**: Creates a new Azure Container Group
 - **ACIDelete**: Deletes a Container Group
 - **ACIDetails**: Gets details/logs for a Container Group/Container
-- **ACIGC**: Runs every 5', removes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
-- **ACIList**: Returns the details about 'Running' Container Groups
+- **ACIGC**: [Timer triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer), runs every 5', deletes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
+- **ACIList**: Returns the details (IP/ number of active sessions) about 'Running' Container Groups
 - **ACIMonitor**: Responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed
 - **ACISetSessions**: Sets the running sessions for each Container Group
 - **ACISetState**: Sets the state of the Container Group (2 options are 'MarkedForDeletion' and 'Failed')
@@ -35,9 +35,9 @@ These functions are supposed to be called by an external service (for a game, th
 
 Azure Container Groups that are created can be in one of the below states:
 
-- **Creating**: It just has been created
-- **Running**: Image pulled, public IP ready, can accept connections
-- **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the `ACIGC` function runs
+- **Creating**: Container group has just been created
+- **Running**: Docker image pulled, public IP (if available) ready, can accept connections/sessions
+- **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the **ACIGC** Function runs
 - **Failed**: When something has gone bad
 
 ## Flow
@@ -63,7 +63,7 @@ Indeed, there 4 4 ARM files on the project. They are executed in the following o
 - **deploy.json**: The master template that deploys the other 3
 - **deploy.function.json**: Deploys the Azure Function App that contains the Functions of our project
 - **deploy.function.config.json**: As we need to set an environment variable that gets the value of our 'ACISetSessions' Function trigger URL, we need to set up this template that executes *after* the deployment of the Azure Function App has completed.
-- **deploy.eventgridsubscription.json**: Again, we need to get the Event Grid webhook so we run this *after* the deployment of the Azure Function App has completed.
+- **deploy.eventgridsubscription.json**: Again, we need to get the Event Grid webhook/URL so we manually run this *after* the deployment of the Azure Function App has completed (and the URL has been internally created).
 
 #### I want to handle more events from Azure Event Grid. Where is the definition of those events?
 Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-resource-groups) for resource group events and [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions) for subscription-wide events.
@@ -85,7 +85,7 @@ Not direct Function testing on this project (yet), however you can see a testing
 - AZURE_STORAGE_ACCESS_KEY = ''
 
 #### How can I monitor Event Grid message delivery?
-Check [here](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery).
+Check [here](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery) on Azure Event Grid documentation.
 
 ## Demo
 We have created a Docker image of the popular game open source game [Teeworlds](https://www.teeworlds.com/) that can be used to demonstrate this project. Here are the steps that you could use if you wanted to set up a quick demo of the project:
@@ -128,7 +128,9 @@ We have created a Docker image of the popular game open source game [Teeworlds](
     }
 }
 ```
-- Once it's deployed, you will see an entry in your Azure Table. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. If Event Grid integration works, your instance should be in the **Running** stage, having a Public IP. The Storage account that contains this Table should have a name similar to `RANDOM_STRINGacidetails`.
+As you can easily notice, game requires only one open port (8303/udp) in order to function correctly.
+- Once it's deployed, you will see an entry in your Azure Table. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. Container should be in the **Creating** state.
+- Hopefully Event Grid integration works, so after a couple of minutes your instance should have transitioned to the **Running** state, having a Public IP. The Storage account that contains this Table should have a name similar to `RANDOM_STRINGacidetails`.
 - Call the **ACIList** Function to see your **Running** Container Instances. If result is something like the below, you have successfully set up your Teeworlds game server on Azure!
 ```javascript
 [
