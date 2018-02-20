@@ -56,7 +56,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[{\r\n    \"resourceGroup\": \"teeworlds\",\r\n    \"containerGroupName\": \"teeserver\",\r\n    \"activeSessions\": 0\r\n}]"
+					"raw": "[{\r\n    \"resourceGroup\": \"teeworlds\",\r\n    \"containerGroupName\": \"teeserver1\",\r\n    \"activeSessions\": 0\r\n}]"
 				},
 				"url": {
 					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACISetSessions?code=FUNCTION_KEY",
@@ -94,7 +94,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    resourceGroup: \"teeworlds\",\r\n    containerGroupName: \"teeserver\"\r\n}"
+					"raw": "{\r\n    resourceGroup: \"teeworlds\",\r\n    containerGroupName: \"teeserver1\"\r\n}"
 				},
 				"url": {
 					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACIDelete?code=FUNCTION_KEY",
@@ -132,7 +132,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    resourceGroup: \"teeworlds\",\r\n    containerGroupName: \"teeserver\",\r\n    type:\"logs\",\r\n    containerName: \"teeserver\"\r\n}"
+					"raw": "{\r\n    resourceGroup: \"teeworlds\",\r\n    containerGroupName: \"teeserver1\",\r\n    type:\"logs\",\r\n    containerName: \"teeserver1\"\r\n}"
 				},
 				"url": {
 					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACIDetails?code=FUNCTION_KEY",
@@ -170,10 +170,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    resourceGroup: \"acitest123\",\r\n    containerGroupName: \"cigroup\",\r\n    state:\"MarkedForDeletion\"\r\n}"
+					"raw": "{\r\n    resourceGroup: \"teeworlds\",\r\n    containerGroupName: \"teeserver1\",\r\n    state:\"MarkedForDeletion\"\r\n}"
 				},
 				"url": {
-					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACISetState?code=zZay/SNdQKaWnFsUQvZMpTmZbLMivXKd7hTmhsBJrxEsUjpS2i7R3w==",
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACISetState?code=FUNCTION_KEY",
 					"protocol": "https",
 					"host": [
 						"acitest123",
@@ -187,7 +187,7 @@
 					"query": [
 						{
 							"key": "code",
-							"value": "zZay/SNdQKaWnFsUQvZMpTmZbLMivXKd7hTmhsBJrxEsUjpS2i7R3w==",
+							"value": "FUNCTION_KEY",
 							"equals": true
 						}
 					]
