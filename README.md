@@ -117,3 +117,6 @@ Check [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containe
 
 #### I need to modify the ARM templates you provide, where can I find more information?
 You can check the Azure Resource Manager documentation [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview).
+
+#### In your demos you are using Docker Hub, what if I want to use a private registry?
+Check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-using-azure-container-registry) for instructions on how to deploy images that are hosted on Azure Container Registry.
