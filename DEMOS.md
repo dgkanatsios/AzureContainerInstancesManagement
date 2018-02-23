@@ -51,7 +51,7 @@ Keep these credentials handy as you will need them when you will deploy your Con
 - Deploy the project in your Azure subscription. You can use one-click deployment, as described in [README.md](README.md).
 - Deploy the Event Grid subscription for the **ACIMonitor** Function. You can create the subscription by visiting the `ACIMonitor` Function page on the Azure portal (check [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription) for instructions). Once you get the webhook URL, you can also use the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json) file to deploy the Event Grid subscription. To do that, go to the Azure portal and ask to create a `Template Deployment` resource. When you deploy your Event Grid suscription, make sure that you're monitoring **all** events on either the Resource Group you're planning to create your Container Instances on or your entire subscription.
 - Call the **ACICreate** Function to create an Azure Container Instance with the image of your game. You can get Function's URL (including the key) from the Azure Portal ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function)) and use the provided [Postman](https://www.getpostman.com/) files (located [here](various)) to begin. There are two POSTMAN exported collections, one for each game.
-For the OpenArena you can use the following POST body. Make sure you change the values `resourceGroup`, `containerGroupName`, `containers[0].name`,`containers[0].volumeMounts.name`,`containerGroup.volumes[0].name` as well as the values in `containerGroup.volumes[0].azureFile` object.
+For the OpenArena you can use the following POST body. Make sure you change the values `resourceGroup`, `containerGroupName`, `containers[0].name`,`containers[0].volumeMounts.name`,`containerGroup.volumes[0].name`, `containerGroup.ipAddress.dnsNameLabel` as well as the values in `containerGroup.volumes[0].azureFile` object.
 ```javascript
 {
     "resourceGroup": "acimanagement",
@@ -93,7 +93,8 @@ For the OpenArena you can use the following POST body. Make sure you change the 
                 "protocol": "udp",
                 "port": 27960
             }],
-            "type": "Public"
+            "type": "Public",
+	    "dnsNameLabel": "customDNSName"
         },
         "osType": "Linux",
         "volumes": [{
@@ -108,7 +109,7 @@ For the OpenArena you can use the following POST body. Make sure you change the 
 }
 ```
 
-For teeworlds you could use this script, modify the `resourceGroup`, `containerGroupName`, `containers[0].name` values as well as the `SERVER_NAME` environment variable.
+For teeworlds you could use this script, modify the `resourceGroup`, `containerGroupName`, `containers[0].name`, `containerGroup.ipAddress.dnsNameLabel` values as well as the `SERVER_NAME` environment variable.
 ```javascript
 {
     "resourceGroup": "teeworlds",
@@ -138,7 +139,8 @@ For teeworlds you could use this script, modify the `resourceGroup`, `containerG
                 "protocol": "udp",
                 "port": 8303
             }],
-            "type": "Public"
+            "type": "Public",
+	    "dnsNameLabel": "customDNSName"
         },
         "osType": "Linux"
     }
