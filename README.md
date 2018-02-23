@@ -10,14 +10,14 @@ Suppose that you want to manage a series of running Docker containers. These con
 
 ## High level overview
 
-Project exposes some Functions/webhooks that can be called to create/delete/get logs Azure Container Instances. There is a Function which can be used to report running/active sessions for each container. These sessions could be game server sessions or just 'remaining work to do'. When we create a new container, it takes some time for it to be created. When it's done and the container is running successfully, our project is notified via an [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) message. There is also a Function that GETs the running containers, the number of their active jobs/sessions as well as their Public IPs. This can be used to see the load of the running containers.
+Project contains some Functions/webhooks that can be called to create/delete/get logs from Azure Container Instances (called `ACICreate`,`ACIDelete`,`ACIDetails` respectively). There is a Function, called `ACISetSessions`, which can be used to set/report running/active sessions for each container. These sessions could be game server sessions or just 'remaining work to do'. When we create a new container, it takes some time for it to be created. When it's done and the container is running successfully, our project is notified via an [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) message. This message is posted to the `ACIMonitor` method, whose sole purpose is to listen to this messages and act appropriately. There is also a Function (`ACIList`) that retrieves a list of the running containers, the number of their active jobs/sessions as well as their Public IPs. This can be used to see the load of the running containers.
 
-We have a Function that enables the caller to set the state of a container. This can be used to 'smoothly delete' a running container. Imagine this, at some point in time, we might want to delete a container (probably the existing ones can handle the incoming load). However, we do not want to disrupt existing jobs/sessions running on this particular container, so we do it call this Function to set its state as 'MarkedForDeletion'. Moreover, there is another Function that is called on regular time intervals whose job is to delete containers that are 'MarkedForDeletion' and have no running jobs/sessions on them.
+There is also a Function (`ACISetState`) that enables the caller to set the state of a container. This can be used to 'smoothly delete' a running container. Imagine this, at some point in time, we might want to delete a container (probably the existing ones can handle the incoming load). However, we do not want to disrupt existing jobs/sessions running on this particular container, so we do it call this Function to set its state as 'MarkedForDeletion'. Moreover, there is another Function (`ACIGC`) that is called on regular time intervals whose job is to delete containers that are 'MarkedForDeletion' and have no running jobs/sessions on them. To delete them, it calls the `ACIDelete` Function.
 
 Finally, we suppose that there is an external service that uses our Functions to manage running Docker containers and schedule sessions on them.
 
 ## Inspiration
-This project was heavily inspired by a similar project that deals with VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
+This project was heavily inspired by a similar project that deals with a similar issue but uses Azure VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
 
 ## One-click deployment
 
@@ -29,26 +29,26 @@ This operation will trigger a template deployment of the [deploy.json](deploy.js
 
 ## Demo
 
-We've created a couple of demos so that you can test the service, check the details at the [DEMOS.md](DEMOS.md) file.
+We've created a couple of demos so that you can test the project, check the detailed documentation at the [DEMOS.md](DEMOS.md) file.
 
 ## Technical details
 
 This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) and [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/). All operations deal with [Container Groups](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-groups), which are the top-level resource in Azure Container Instances. Each Container Group can have X number of containers, a public IP etc. Most Functions are HTTP-triggered unless otherwise noted. Moreover, HTTP-triggered Functions are protected by ['authorization keys'](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys). 
 
-- **ACICreate**: Creates a new Azure Container Group
-- **ACIDelete**: Deletes a Container Group
-- **ACIDetails**: Gets details or logs for a Container Group/Container
-- **ACIGC**: [Timer triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer), runs every 5' by default, deletes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
-- **ACIList**: Returns the details (IP/ number of active sessions) about 'Running' Container Groups
-- **ACIMonitor**: [EventGrid triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid), it responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed in the specified Resource Group
-- **ACISetSessions**: Sets the running sessions for each Container Group
-- **ACISetState**: Sets the state of the Container Group (2 options are 'MarkedForDeletion' and 'Failed')
+- **ACICreate**: Creates a new Azure Container Group. Details (container image, volume mounts, resource group, container and container group names) are passed via the POST request.
+- **ACIDelete**: Deletes a Container Group with the specified name at the specified Resource Group (details are again passed in the POST body).
+- **ACIDetails**: Gets details or logs (depending on a POST parameter) for a Container Group/Container.
+- **ACIGC**: [Timer triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer), runs every 5' by default, deletes all Container Groups that have no running sessions (zero) and have explicitly been marked as 'MarkedForDeletion'.
+- **ACIList**: Returns the details (Public IP/number of active sessions) of all 'Running' Container Groups
+- **ACIMonitor**: [EventGrid triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid), it responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed/failed in the specified Resource Group. This Resource Group is designated when the Event Grid subscription is created (check the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json)) file.
+- **ACISetSessions**: Sets the number of active/running sessions for each Container Group. Caller can send number of sessions for one or more Container Groups. This way, this method can be called by the external service (it will report active sessions for all containers) or by each container itself (it will report active sessions for itself only).
+- **ACISetState**: Sets the state of the specified Container Group. The only allowed options are 'MarkedForDeletion' and 'Failed'.
 
-As mentioned before, the HTTP-triggered Functions are supposed to be called by an external service (for a game, this would be the matchmaking service). The details of all containers are saved in an [Azure Table Storage](https://azure.microsoft.com/en-us/services/storage/tables/) table. For each container, this has information regarding its name (specifically, the container group name), the Resource Group it belongs to, its Public IP Address, its active sessions and its state.
+As mentioned before, the HTTP-triggered Functions are supposed to be called by an external service (for a game, this would be the matchmaking service). The details of all containers are saved in an [Azure Table Storage](https://azure.microsoft.com/en-us/services/storage/tables/) table. For each container, there is a row that holds data regarding its name (specifically, the container group name), the Resource Group it belongs to, its Public IP Address, its active sessions and its state.
 
-Azure Container Groups that are created can be in one of the below states:
+In this table, Azure Container Groups can hold one of the below states:
 
-- **Creating**: Container group has just been created
+- **Creating**: Container group has just been created, necessary resources are provisioned, DOcker image is being pulled
 - **Running**: Docker image pulled, public IP (if available) ready, can accept connections/sessions
 - **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the **ACIGC** Function runs
 - **Failed**: When something has gone bad
