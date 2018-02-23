@@ -25,7 +25,7 @@ Click the following button to deploy the project to your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-This operation will trigger a template deployment of the [deploy.json](deploy.json) ARM template file to your Azure subscription, which will create the necessary Azure resources as well as pull the source code from this repository. As soon as the deployment completes, you need to manually add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). You can use [this](deploy.eventgridsubscription.json) ARM template, just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
+This operation will trigger a template deployment of the [deploy.json](deploy.json) ARM template file to your Azure subscription, which will create the necessary Azure resources as well as pull the source code from this repository. As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). As soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
 
 ## Demo
 
@@ -55,14 +55,15 @@ In this table, Azure Container Groups can hold one of the below states:
 
 ## Flow
 
-A typical flow of the app goes like this:
+A typical flow of the project goes like this:
 
-1. External service calls `ACICreate`, so a new Container Group is created and is set to `Creating` state
-2. As soon as the Event Grid notification comes to `ACIMonitor` function, this means that the Container Group is ready so the `ACIMonitor` function inserts its public IP into Table Storage
-3. External service can call `ACIList` to get Container Groups in `Running` state as well as `ACIDetails` to get logs/details about the Container Group
-4. External service or the Docker containers themselves can call `ACISetSessions` to set running sessions count on Table Storage
-5. External Service can call `ACISetState` to set Container Group’s state as `MarkedForDeletion` when the Container Group is no longer needed
-6. Time triggered `ACIGC` (GC: Garbage Collector) will remove unwanted Container Groups (i.e. Container Groups that have 0 active/running sesions and are `MarkedForDeletion`)
+1. External service calls `ACICreate`, so a new Container Group is created and is set to `Creating` state in the table.
+2. As soon as the Event Grid notification comes to `ACIMonitor` function, this means that the Container Group is ready. The `ACIMonitor` function inserts its public IP into Table Storage and sets its state to `Running`.
+3. External service can call `ACIList` to get info about Container Groups in `Running` state. The service can use this information to determine current system load and schedule new sessions accordingly.
+4. Moreover, an operator can calll the `ACIDetails` Function to get logs/debug a running Container or get details about the Container Group.
+5. External service or the Docker containers themselves can call `ACISetSessions` to set running sessions count on Table Storage.
+6. External Service can call `ACISetState` to set Container Group’s state as `MarkedForDeletion` when the Container Group is no longer needed
+7. The time triggered `ACIGC` (GC: Garbage Collector) will delete unwanted Container Groups (i.e. Container Groups that have 0 active/running sesions and are `MarkedForDeletion`). The deletion will happen via the `ACIDelete` Function.
 
 ![alt text](media/states.jpg "States and Transition")
 
@@ -73,10 +74,10 @@ This guides the [Kudu](https://github.com/projectkudu/kudu) engine as to where t
 
 #### Why are there 4 ARM templates instead of one?
 Indeed, there 4 4 ARM files on the project. They are executed in the following order:
-- **deploy.json**: The master template that deploys the other 3
+- **deploy.json**: The master template that deploys the next two
 - **deploy.function.json**: Deploys the Azure Function App that contains the Functions of our project
 - **deploy.function.config.json**: As we need to set an environment variable that gets the value of our 'ACISetSessions' Function trigger URL, we need to set up this template that executes *after* the deployment of the Azure Function App has completed.
-- **deploy.eventgridsubscription.json**: Again, we need to get the Event Grid webhook/URL so we manually run this *after* the deployment of the Azure Function App has completed (and the URL has been internally created).
+- **deploy.eventgridsubscription.json**: This template can be deployed manually after the deployment of the others has completed. We need the Function App name plus the URL of the ACIMonitor Function.
 
 #### I want to handle more events from Azure Event Grid. Where is the definition of those events?
 Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-resource-groups) for resource group events and [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions) for subscription-wide events.
@@ -85,7 +86,7 @@ Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-reso
 As always, Azure documentation is your friend, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-troubleshooting).
 
 #### How can I manage Keys for my Functions?
-Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API).
+Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API) to read some details about Azure Function's key management API. You can easily retrieve them from the Azure Portal by visiting each Function's page.
 
 #### How can I test the Functions?
 Not direct Function testing on this project (yet), however you can see a testing file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:

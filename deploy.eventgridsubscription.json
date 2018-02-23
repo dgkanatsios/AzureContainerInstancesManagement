@@ -4,6 +4,9 @@
     "parameters": {
         "functionName": {
             "type": "string"
+        },
+        "ACIMonitorURL": {
+            "type": "string"
         }
     },
     "resources": [{
@@ -14,7 +17,7 @@
             "destination": {
                 "endpointType": "WebHook",
                 "properties": {
-                    "endpointUrl": "[concat('https://',parameters('functionName'),'.azurewebsites.net/admin/extensions/EventGridExtensionConfig?functionName=ACIMonitor&code=',listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIMonitor'),'2015-08-01').key)]"
+                    "endpointUrl": "[parameters('ACIMonitorURL')]"
                 }
             },
             "filter": {
