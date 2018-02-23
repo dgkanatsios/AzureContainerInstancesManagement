@@ -1,0 +1,238 @@
+{
+	"info": {
+		"name": "ACIManagement OpenArena",
+		"_postman_id": "04f9c581-55f6-664e-fb54-bf7ab3330ba4",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ACICreate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"resourceGroup\": \"acimanagement\",\n    \"containerGroupName\": \"openarenaserver1\",\n    \"containerGroup\" : {\n        \"location\": \"westeurope\",\n        \"containers\": [{\n            \"name\": \"openarenaserver1\",\n            \"image\": \"dgkanatsios/docker_openarena\", \n            \"environmentVariables\": [{\n            \t\"name\":\"OA_STARTMAP\",\n            \t\"value\":\"dm4ish\"\n            },{\n            \t\"name\":\"OA_PORT\",\n            \t\"value\":\"27960\"\n            }],\n            \"resources\": {\n                \"requests\": {\n                    \"memoryInGB\": 0.5,\n                    \"cpu\": 0.5\n                }\n            },\n            \"ports\": [{\n                \"protocol\": \"udp\",\n                \"port\": 27960\n            }],\n            \"volumeMounts\":[{\n            \t\"name\":\"openarenadatavolume\",\n            \t\"mountPath\": \"/data\",\n            \t\"readOnly\": false\n            }\n            \t]\n        }],\n        \"ipAddress\": {\n            \"ports\": [{\n                \"protocol\": \"udp\",\n                \"port\": 27960\n            }],\n            \"type\": \"Public\"\n        },\n        \"osType\": \"Linux\",\n        \"volumes\": [{\n\t\t  \"name\": \"openarenadatavolume\",\n\t\t  \"azureFile\": {\n\t\t    \"shareName\": \"openarenadata\",\n\t\t    \"storageAccountName\": \"openarena24496\",\n\t\t    \"storageAccountKey\": \"mGNnZoYmVQQF8Rw0e18axLR6n0y/6eaXOZduGMMOXa4UNSihyxMRFmU7SQdAzJZPP92qZGRZlIKFpmomo/82dQ==\"\n\t\t  }\n\t\t}]\n    }\n}"
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACICreate"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ACISetSessions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[{\r\n    \"resourceGroup\": \"acimanagement\",\r\n    \"containerGroupName\": \"openarenaserver1\",\r\n    \"activeSessions\": 0\r\n}]"
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACISetSessions"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ACIDelete",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    resourceGroup: \"acimanagement\",\r\n    containerGroupName: \"teeserver1\"\r\n}"
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACIDelete"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ACIDetails",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    resourceGroup: \"acimanagement\",\r\n    containerGroupName: \"openarenaserver1\",\r\n    type:\"logs\",\r\n    containerName: \"openarenaserver1\"\r\n}"
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACIDetails"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ACISetState",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    resourceGroup: \"acimanagement\",\r\n    containerGroupName: \"openarenaserver1\",\r\n    state:\"MarkedForDeletion\"\r\n}"
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACISetState"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "ACIList",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"protocol": "https",
+					"host": [
+						"FUNCTION_NAME",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"ACIList"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "FUNCTION_KEY",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

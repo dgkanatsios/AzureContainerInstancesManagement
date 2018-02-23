@@ -25,7 +25,15 @@ Click the following button to deploy the project to your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-This operation will trigger a template deployment of the [deploy.json](deploy.json) ARM template file to your Azure subscription, which will create the necessary Azure resources as well as pull the source code from this repository. As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). As soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
+This operation will trigger a template deployment of the [deploy.json](deploy.json) ARM template file to your Azure subscription, which will create the necessary Azure resources as well as pull the source code from this repository. 
+
+You need to specify the following information in order to deploy the project:
+- *Location*: select the Azure Region where your resources will be deployed. [Make sure to select a location that Azure Container Instances are available](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability).
+- *Function Name*: select a unique name for your Function App. This will determine your Function's DNS, so choose wisely.
+- *Client ID and Client Secret: before you deploy, you need to create an Azure Service Principal. This is an identity that has permissions to create/delete/modify Azure Resources (in this case, the Container Instances). Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to create a Service Principal in the Azure Portal. Use the Service Principal's ID and secret on the template deployment.
+- *Repo URL*: this determines the repo that contains the files which will be pulled to create the Azure Functions. You can leave the default or switch it with your own fork.
+
+As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). As soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
 
 ## Demo
 

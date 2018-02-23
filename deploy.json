@@ -13,13 +13,6 @@
                 "description": "It's your Azure Function's domain name. Make sure it is unique, as this will determine Function's DNS"
             }
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "East US",
-            "metadata": {
-                "description": "The Azure datacenter's location where your resources will be deployed"
-            }
-        },
         "ClientId": {
             "type": "securestring",
             "metadata": {
@@ -54,7 +47,7 @@
                         "value": "[variables('acidetailsStorageName')]"
                     },
                     "location": {
-                        "value": "[parameters('location')]"
+                        "value": "[resourceGroup().location]"
                     },
                     "functionName": {
                         "value": "[parameters('functionName')]"
@@ -84,9 +77,6 @@
                     },
                     "acidetailsStorageName": {
                         "value": "[variables('acidetailsStorageName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
                     },
                     "ClientId": {
                         "value": "[parameters('ClientId')]"
