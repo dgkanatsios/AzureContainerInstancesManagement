@@ -83,17 +83,18 @@ A typical flow of the project goes like this:
 This guides the [Kudu](https://github.com/projectkudu/kudu) engine as to where the source code for the Functions is located, in the GitHub repo. Check [here](https://github.com/projectkudu/kudu/wiki/Customizing-deployments) for details.
 
 #### Why are there 4 ARM templates instead of one?
-Indeed, there 4 4 ARM files on the project. They are executed in the following order:
+Indeed, there 4 ARM files on the project. They three of them are executed in the following order:
 - **deploy.json**: The master template that deploys the next two
 - **deploy.function.json**: Deploys the Azure Function App that contains the Functions of our project
 - **deploy.function.config.json**: As we need to set an environment variable that gets the value of our 'ACISetSessions' Function trigger URL, we need to set up this template that executes *after* the deployment of the Azure Function App has completed.
+Whereas the next one is to be executed manually:
 - **deploy.eventgridsubscription.json**: This template can be deployed manually after the deployment of the others has completed. We need the Function App name plus the URL of the ACIMonitor Function.
 
 #### I want to handle more events from Azure Event Grid. Where is the definition of those events?
 Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-resource-groups) for resource group events and [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions) for subscription-wide events.
 
 #### How can I troubleshoot my Azure Container Instances?
-As always, Azure documentation is your friend, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-troubleshooting).
+As always, Azure documentation is your friend, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-troubleshooting). Don't forget that for running containers, you can see their logs via a call to the `ACIDetails` method.
 
 #### How can I manage Keys for my Functions?
 Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API) to read some details about Azure Function's key management API. You can easily retrieve them from the Azure Portal by visiting each Function's page.
@@ -109,7 +110,7 @@ Not direct Function testing on this project (yet), however you can see a testing
 - AZURE_STORAGE_ACCESS_KEY = ''
 
 #### How can I monitor Event Grid message delivery?
-Check [here](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery) on Azure Event Grid documentation.
+Check [this page](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-delivery) on Azure Event Grid documentation.
 
 #### What's the exat format of the container groups ARM Template (or, what kind of JSON can I send to ACICreate)?
 Check [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the ARM Template for Container Groups.
