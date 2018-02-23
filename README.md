@@ -5,36 +5,46 @@
 
 # AzureContainerInstancesManagement
 
-Manage Azure Container Instances using Azure Functions. We suppose that there is an external service that manages running instances (Container Groups) and schedules sessions on them. `Sessions` could be anything that has a fixed lifetime, like multiplayer game sessions.
+This project allows you to manage Docker containers running on [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/).
+Suppose that you want to manage a series of running Docker containers. These containers may be stateful, so classic scaling methods (via Load Balancers etc.) would not work. A classic example is multiplayer game servers, where its server has its own connections to game clients, its own state etc. Another example would be batch-style projects, where each instance would have to deal with a separate set of data. For these kind of purposes, you would need a set of Docker containers being created on demand and deleted when their job is done and they are no longer needed in order to save costs.
+
+## High level overview
+
+Project exposes some Functions/webhooks that can be called to create/delete/get logs Azure Container Instances. There is a Function which can be used to report running/active sessions for each container. These sessions could be game server sessions or just 'remaining work to do'. When we create a new container, it takes some time for it to be created. When it's done and the container is running successfully, our project is notified via an [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/) message. There is also a Function that GETs the running containers, the number of their active jobs/sessions as well as their Public IPs. This can be used to see the load of the running containers.
+
+We have a Function that enables the caller to set the state of a container. This can be used to 'smoothly delete' a running container. Imagine this, at some point in time, we might want to delete a container (probably the existing ones can handle the incoming load). However, we do not want to disrupt existing jobs/sessions running on this particular container, so we do it call this Function to set its state as 'MarkedForDeletion'. Moreover, there is another Function that is called on regular time intervals whose job is to delete containers that are 'MarkedForDeletion' and have no running jobs/sessions on them.
+
+Finally, we suppose that there is an external service that uses our Functions to manage running Docker containers and schedule sessions on them.
 
 ## Inspiration
 This project was heavily inspired by a similar project that deals with VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
 
 ## One-click deployment
 
-Click the following button to deploy in your Azure subscription:
+Click the following button to deploy the project to your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
-As soon as the deployment completes, you need to manually add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription).
+This operation will trigger a template deployment of the [deploy.json](deploy.json) ARM template file to your Azure subscription, which will create the necessary Azure resources as well as pull the source code from this repository. As soon as the deployment completes, you need to manually add the Event Subscription webhook manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). You can use [this](deploy.eventgridsubscription.json) ARM template, just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
 
 ## Demo
-We've created a couple of demos so that you can test the service, check the details on [DEMOS.md](DEMOS.md)
+
+We've created a couple of demos so that you can test the service, check the details at the [DEMOS.md](DEMOS.md) file.
 
 ## Technical details
 
-This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/). It contains 8 functions:
+This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) and [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/). All operations deal with [Container Groups](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-groups), which are the top-level resource in Azure Container Instances. Each Container Group can have X number of containers, a public IP etc. Most Functions are HTTP-triggered unless otherwise noted. Moreover, HTTP-triggered Functions are protected by ['authorization keys'](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys). 
 
 - **ACICreate**: Creates a new Azure Container Group
 - **ACIDelete**: Deletes a Container Group
-- **ACIDetails**: Gets details/logs for a Container Group/Container
-- **ACIGC**: [Timer triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer), runs every 5', deletes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
+- **ACIDetails**: Gets details or logs for a Container Group/Container
+- **ACIGC**: [Timer triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer), runs every 5' by default, deletes all Container Groups that have no running sessions and have been marked as 'MarkedForDeletion'
 - **ACIList**: Returns the details (IP/ number of active sessions) about 'Running' Container Groups
-- **ACIMonitor**: Responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed
+- **ACIMonitor**: [EventGrid triggered](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid), it responds to Event Grid events which occur when a Container Instance resource is created/deleted/changed in the specified Resource Group
 - **ACISetSessions**: Sets the running sessions for each Container Group
 - **ACISetState**: Sets the state of the Container Group (2 options are 'MarkedForDeletion' and 'Failed')
 
-These functions are supposed to be called by an external service (for a game, this would be the matchmaking service).
+As mentioned before, the HTTP-triggered Functions are supposed to be called by an external service (for a game, this would be the matchmaking service). The details of all containers are saved in an [Azure Table Storage](https://azure.microsoft.com/en-us/services/storage/tables/) table. For each container, this has information regarding its name (specifically, the container group name), the Resource Group it belongs to, its Public IP Address, its active sessions and its state.
 
 Azure Container Groups that are created can be in one of the below states:
 
@@ -92,3 +102,6 @@ Check [here](https://docs.microsoft.com/en-us/azure/event-grid/monitor-event-del
 
 #### What's the exat format of the container groups ARM Template (or, what kind of JSON can I send to ACICreate)?
 Check [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the ARM Template for Container Groups.
+
+#### I need to modify the ARM templates you provide, where can I find more information?
+You can check the Azure Resource Manager documentation [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-overview).
