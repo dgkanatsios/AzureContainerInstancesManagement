@@ -145,7 +145,7 @@ For teeworlds you could use this script, modify the `resourceGroup`, `containerG
 }
 ```
 As you can easily notice, OpenArena requires port 27960/udp and Teeworlds requires port 8303/udp in order to function correctly.
-- Once your Docker container is deployed, you will see a new entry in your Azure Table. The Storage account that contains this Table should have a name similar to `RANDOM_STRINGacidetails`. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. Container should be in the **Creating** state.
+- Once your Docker container is deployed, you will see a new entry in your Azure Table. The Storage account that contains this Table should have a name similar to `RANDOM_STRINGacidetails` whereas the actual table name is `ACIDetails`. You can use [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to monitor it. Container should be in the **Creating** state.
 - After a couple of minutes the instance should be running, so you'll see in the table storage that it has transitioned to the **Running** state, having a Public IP.
 - Call the **ACIList** Function to see your **Running** Container Instances. If result is something like the below, you have successfully set up your OpenArena/Teeworlds game server on Azure Container Instances!
 ```javascript
