@@ -120,3 +120,6 @@ You can check the Azure Resource Manager documentation [here](https://docs.micro
 
 #### In your demos you are using Docker Hub, what if I want to use a private registry?
 Check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-using-azure-container-registry) for instructions on how to deploy images that are hosted on Azure Container Registry.
+
+#### Can I modify my container's restart policy?
+Yes! Check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-restart-policy#container-restart-policy) for the allowed options as well as [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the correct `restartPolicy` property location on the Container Group ARM template.
