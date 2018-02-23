@@ -22,6 +22,7 @@ function insertIntoTable(body) {
                     const aciData = {
                         PartitionKey: resourceGroup,
                         RowKey: resourceId,
+                        ActiveSessions: 0,
                         State: constants.creatingState
                     };
 

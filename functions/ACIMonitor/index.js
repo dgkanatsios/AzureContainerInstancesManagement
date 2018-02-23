@@ -29,7 +29,7 @@ function modifyTable(context, eventGridEvent) {
                         aciData.State = constants.runningState;
                         monitorhelpers.getPublicIP(resourceGroup, resourceId).then(ip => {
                             aciData.PublicIP = ip;
-                            tableSvc.insertOrReplaceEntity(tableName, aciData, function (error, result, response) {
+                            tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
                                 if (error) {
                                     reject(error);
                                 } else {
@@ -40,7 +40,7 @@ function modifyTable(context, eventGridEvent) {
                     } else if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteFailure' ||
                         eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteCancel') { //ACI creation failed
                         aciData.State = constants.failedState;
-                        tableSvc.replaceEntity(tableName, aciData, function (error, result, response) {
+                        tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
                             if (error) {
                                 reject(error);
                             } else {
