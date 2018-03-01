@@ -75,6 +75,8 @@ A typical flow of the project goes like this:
 6. External Service can call `ACISetState` to set Container Group’s state as `MarkedForDeletion` when the Container Group is no longer needed
 7. The time triggered `ACIGC` (GC: Garbage Collector) will delete unwanted Container Groups (i.e. Container Groups that have 0 active/running sesions and are `MarkedForDeletion`). The deletion will happen via the `ACIDelete` Function.
 
+**Important**: We take it for granted that the server application will contain code to get access to its state. This way, if its current state is 'MarkedForDeletion', there will be no other sessions on this server when the current workload will finish (e.g. if we're running a multiplayer game server, players will disconnect and return to the matchmaking lobby after the current game complates). This way, Container Instance can safely be removed by the `ACIGC` Function.
+
 ![alt text](media/states.jpg "States and Transition")
 
 ## FAQ
@@ -100,7 +102,7 @@ As always, Azure documentation is your friend, check [here](https://docs.microso
 Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API) to read some details about Azure Function's key management API. You can easily retrieve them from the Azure Portal by visiting each Function's page.
 
 #### How can I test the Functions?
-Not direct Function testing on this project (yet), however you can see a testing file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
+Not direct Function testing on this project (yet), however you can see a 'testing' file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
 
 - SUBSCRIPTIONID = ''
 - CLIENTID = ''
@@ -122,4 +124,4 @@ You can check the Azure Resource Manager documentation [here](https://docs.micro
 Check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-using-azure-container-registry) for instructions on how to deploy images that are hosted on Azure Container Registry.
 
 #### Can I modify my container's restart policy?
-Yes! Check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-restart-policy#container-restart-policy) for the allowed options as well as [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the correct `restartPolicy` property location on the Container Group ARM template.
+Of course, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-restart-policy#container-restart-policy) for the allowed options as well as [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the correct `restartPolicy` property location on the Container Group ARM template.

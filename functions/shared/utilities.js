@@ -1,4 +1,5 @@
 const constants = require('./constants');
+const crypto = require('crypto');
 
 module.exports = {
     validatePostData: function (body) {
@@ -10,11 +11,11 @@ module.exports = {
 
     validateDetailsData: function (body) {
         //only 'logs' or undefined is accepted for type
-        if (body && body.resourceGroup && body.containerGroupName && body.type){
-            if(body.type === 'logs' && body.containerName){
+        if (body && body.resourceGroup && body.containerGroupName && body.type) {
+            if (body.type === 'logs' && body.containerName) {
                 return true;
             }
-            else{
+            else {
                 return false;
             }
         }
@@ -51,5 +52,12 @@ module.exports = {
             body: errorMessage,
         };
         context.done();
+    },
+
+    generateRandomString(length) {
+        if (length < 3 || length > 10) {
+            throw new Error('string must be between 3 and 10 chars');
+        }
+        return crypto.randomBytes(length).toString('hex');
     }
 }

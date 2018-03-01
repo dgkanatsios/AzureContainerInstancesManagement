@@ -21,43 +21,52 @@
             "type": "string"
         }
     },
-    "resources": [{
-        "apiVersion": "2016-03-01",
-        "name": "[parameters('functionName')]",
-        "type": "Microsoft.Web/Sites",
-        "properties": {
+    "resources": [
+        {
+            "apiVersion": "2016-03-01",
             "name": "[parameters('functionName')]",
-            "siteConfig": {},
-            "clientAffinityEnabled": false,
-            "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-            "hostingEnvironment": ""
-        },
-        "resources": [{
-            "apiVersion": "2015-08-01",
-            "name": "appsettings",
-            "type": "config",
-            "dependsOn": [
-                "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/Sites', parameters('functionName'))]"
-            ],
+            "type": "Microsoft.Web/Sites",
             "properties": {
-                "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                "FUNCTIONS_EXTENSION_VERSION": "~1",
-                "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
-                "SUBSCRIPTIONID": "[subscription().subscriptionId]",
-                "TENANT": "[subscription().tenantId]",
-                "CLIENTID": "[parameters('ClientId')]",
-                "CLIENTSECRET": "[parameters('ClientSecret')]",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
-                "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
-                "AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
-                "SET_SESSIONS_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetSessions'),'2015-08-01').trigger_url]",
-                "ACI_DELETE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIDelete'),'2015-08-01').trigger_url]",
-                "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]"
-            }
-        }],
-        "location": "[resourceGroup().location]",
-        "kind": "functionapp"
-    }]
+                "name": "[parameters('functionName')]",
+                "siteConfig": {},
+                "clientAffinityEnabled": false,
+                "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId,'/resourcegroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "hostingEnvironment": ""
+            },
+            "resources": [
+                {
+                    "apiVersion": "2015-08-01",
+                    "name": "appsettings",
+                    "type": "config",
+                    "dependsOn": [
+                        "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/Sites', parameters('functionName'))]"
+                    ],
+                    "properties": {
+                        "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+                        "FUNCTIONS_EXTENSION_VERSION": "~1",
+                        "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+                        "SUBSCRIPTIONID": "[subscription().subscriptionId]",
+                        "TENANT": "[subscription().tenantId]",
+                        "CLIENTID": "[parameters('ClientId')]",
+                        "CLIENTSECRET": "[parameters('ClientSecret')]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
+                        "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
+                        "AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
+                        "SET_SESSIONS_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetSessions'),'2015-08-01').trigger_url]",
+                        "ACI_DELETE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACIDelete'),'2015-08-01').trigger_url]",
+                        "ACI_CREATE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACICreate'),'2015-08-01').trigger_url]",
+                        "ACI_SET_STATE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetState'),'2015-08-01').trigger_url]",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
+                        "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]",
+                        "MOUNT_STORAGE_ACCOUNT_NAME": "",
+                        "MOUNT_STORAGE_ACCOUNT_KEY": "",
+                        "CONTAINER_GROUP_TEMPLATE":""
+                    }
+                }
+            ],
+            "location": "[resourceGroup().location]",
+            "kind": "functionapp"
+        }
+    ]
 }
