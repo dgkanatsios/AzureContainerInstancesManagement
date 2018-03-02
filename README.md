@@ -63,6 +63,8 @@ In this table, Azure Container Groups can hold one of the below states:
 - **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the **ACIGC** Function runs
 - **Failed**: When something has gone bad
 
+Moreover, if you navigate to the root of the deployment using a web browser (e.g. visit https://your_function_name.azurewebsites.net) you will see a page that displays details about your running servers (Public IPs, ActiveSessions, datacenter Location etc.).
+
 ## Flow
 
 A typical flow of the project goes like this:
@@ -78,6 +80,21 @@ A typical flow of the project goes like this:
 **Important**: We take it for granted that the server application will contain code to get access to its state. This way, if its current state is 'MarkedForDeletion', there will be no other sessions on this server when the current workload will finish (e.g. if we're running a multiplayer game server, players will disconnect and return to the matchmaking lobby after the current game complates). This way, Container Instance can safely be removed by the `ACIGC` Function.
 
 ![alt text](media/states.jpg "States and Transition")
+
+
+## ACIAutoScaler
+
+You may see that there is an `ACIAutoScaler` Function, disabled by default (value is set in the `ACIAutoScaler\function.json` file). This function is a timer triggered one and works according to the simple following logic:
+- it checks the `ACIAutoScaler\config.json` file for values regarding if scale in/out is allowed and max sessions per server.
+- in order to do 'scale out', sum of current active sessions in all containers must be > 80% of the max load (which is number of containers * max sessions per container). Then, the `ACICreate` Function is called to add another Container Group.
+- in order to do 'scale in', sum of current active sessions in all containers must be < 60% of the max load. Then, the `ACISetState` Function is called to set the container with the fewest active sessions as `MarkedForDeletion` (we take into account that our app/game is clever enough to not schedule any more sessions on this container).
+
+For the scale out to work, user (optionally) has to manually fill values for the following environment variables:
+- `MOUNT_STORAGE_ACCOUNT_NAME`: the name of a storage account, will be mounted during boot
+- `MOUNT_STORAGE_ACCOUNT_KEY`: the key for this storage account
+- `CONTAINER_GROUP_TEMPLATE`: the ARM template for the container group that will be deployed. You can use the contents of [this](/various/defaultContainerGroupTemplate.json) file as a starting point (same file you can use for the OpenArena demo).
+
+The autoscaling is considered work in progress but can be used as a starting point for you to establish your own rules.
 
 ## FAQ
 

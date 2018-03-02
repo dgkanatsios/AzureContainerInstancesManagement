@@ -18,11 +18,12 @@ function listRunningACIs(body) {
                         } else {
                             resolve(result.entries.map(entry => {
                                 return {
-                                    resourceGroup: entry.PartitionKey._, 
-                                    containerGroupName: entry.RowKey._,
+                                    ResourceGroup: entry.PartitionKey._, 
+                                    ContainerGroupName: entry.RowKey._,
                                     PublicIP: entry.PublicIP._,
-                                    ActiveSessions: entry.ActiveSessions._ 
-                                }
+                                    ActiveSessions: entry.ActiveSessions._ ,
+                                    Location: entry.Location._
+                                };
                             }));
                         }
                     });

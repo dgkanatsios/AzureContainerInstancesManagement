@@ -7,7 +7,7 @@ module.exports = function (context, myTimer) {
         context.log('Node.js is running late!');
     }
     context.log('Autoscaler trigger function ran!', timeStamp);
-    autoscalerhelpers.handleScaleInOut().then(
+    autoscalerhelpers.handleScaleInOut(context).then(
         (res) => {
             context.log(res);
             context.done();

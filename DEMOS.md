@@ -9,10 +9,10 @@ The steps to run the demo for both games are pretty similar. The big difference 
 - (*OpenArena game only*) You need to create an Azure Storage account to store the game's files. Use the following script from either [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/overview?view=azure-cli-latest) or [Azure Cloud Shell](https://azure.microsoft.com/en-us/features/cloud-shell/):
 ```bash
 # Change these parameters as needed
-ACI_PERS_RESOURCE_GROUP=resource group where you want to deploy your Azure Files share. You can use the same one as your Functions
 ACI_PERS_STORAGE_ACCOUNT_NAME=openarena$RANDOM
 ACI_PERS_LOCATION=westeurope # for better performance, choose the location that your Azure Container Instances will be deployed
 ACI_PERS_SHARE_NAME=openarenadata
+ACI_PERS_RESOURCE_GROUP=acimanagement #resource group where you want to deploy your Azure Files share. You can use the same one as your Functions
 
 # Create the storage account with the provided parameters
 az storage account create \
@@ -38,7 +38,7 @@ echo $STORAGE_KEY
 Keep these credentials handy as you will need them when you will deploy your Container Group for OpenArena game.
 - (*OpenArena game only*) Download the game and place all its files onto the Azure File share you created. You can
     - download the files locally and use [Azcopy](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy) or [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to upload them on the share
-    - mount the share locally or on an Azure VM, download the files and transfer them via SMB (this was must faster for me). You can use this command on Windows
+    - mount the share locally or on an Azure VM, download the files and transfer them via SMB (this proved to be must faster in our tests). You can use this command on Windows
     ```bash
     net use Z: \\accountname.file.core.windows.net\openarenadata /u:accountname key_ending_in==
     ```
@@ -46,8 +46,16 @@ Keep these credentials handy as you will need them when you will deploy your Con
     ```bash
     sudo mount -t cifs //accountname.file.core.windows.net/openarenadata /path -o vers=3.0,username=accountname,password=key_ending_in==,dir_mode=0777,file_mode=0777
     ```
-- Download the game of your choice. For OpenArena check [here](http://openarena.wikia.com/wiki/Download_Mirrors) and for Teeworlds check [here](https://www.teeworlds.com/?page=downloads)
-- You need to create an Azure Service Principal. This is an identity that has permission to create/update/delete Azure Resources. Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to do it from the Azure Portal. Keep the Client ID and secret handy as you will need them during deployment.
+    Bear in mind that in the end, OpenArena files should exist directly in the path you specify. For instance, if you selected `/path` as the mount folder, the `pak0.pk3` file's full path should be `/path/baseoa/pak0.pk3`.
+    To do this on Linux, you could try
+    ```bash
+    unzip path/to/openarena.zip -d /temppath
+    cd /temppath
+    cd openarena-0.8.8
+    mv * /path
+    ```
+- Download the game of your choice. For OpenArena check [here](http://openarena.wikia.com/wiki/Download_Mirrors) and for Teeworlds check [here](https://www.teeworlds.com/?page=downloads) for download links.
+- You need to create an Azure Service Principal. This is an identity that has permission to create/update/delete Azure Resources, it will be used to interact with our Container Instances. Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to do it from the Azure Portal and [here](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?toc=%2Fazure%2Fazure-resource-manager%2Ftoc.json&view=azure-cli-latest) for Azure CLI instructions (much faster). Keep the Client ID and secret handy as you will need them during deployment.
 - Deploy the project in your Azure subscription. You can use one-click deployment, as described in [README.md](README.md).
 - Deploy the Event Grid subscription for the **ACIMonitor** Function. You can create the subscription by visiting the `ACIMonitor` Function page on the Azure portal (check [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription) for instructions). Once you get the webhook URL, you can also use the [deploy.eventgridsubscription.json](deploy.eventgridsubscription.json) file to deploy the Event Grid subscription. To do that, go to the Azure portal and ask to create a `Template Deployment` resource. When you deploy your Event Grid suscription, make sure that you're monitoring **all** events on either the Resource Group you're planning to create your Container Instances on or your entire subscription.
 - Call the **ACICreate** Function to create an Azure Container Instance with the image of your game. You can get Function's URL (including the key) from the Azure Portal ([instructions](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-azure-function#test-the-function)) and use the provided [Postman](https://www.getpostman.com/) files (located [here](various)) to begin. There are two POSTMAN exported collections, one for each game.

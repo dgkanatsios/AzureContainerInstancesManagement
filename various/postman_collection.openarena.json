@@ -211,7 +211,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate?code=FUNCTION_KEY",
+					"raw": "https://FUNCTION_NAME.azurewebsites.net/api/ACICreate",
 					"protocol": "https",
 					"host": [
 						"FUNCTION_NAME",
