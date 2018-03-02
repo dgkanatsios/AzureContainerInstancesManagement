@@ -23,6 +23,7 @@ function insertIntoTable(body) {
                         PartitionKey: resourceGroup,
                         RowKey: resourceId,
                         ActiveSessions: 0,
+                        ContainerName: body.containerGroup.containers[0].name,
                         State: constants.creatingState,
                         Location: body.containerGroup.location,
                         Image: body.containerGroup.containers[0].image,
