@@ -49,9 +49,8 @@ function handleScaleInOut(context) {
                     } else {
                         return Promise.resolve(false);
                     }
-                }
-                else{
-                    return Promise.resolve(false);//scale out occured, so no scale in
+                } else {
+                    return Promise.resolve(false); //scale out occured, so no scale in
                 }
             })
             .then((scaleInResult) => {
@@ -63,14 +62,15 @@ function handleScaleInOut(context) {
 }
 
 //promise resolves to true or false regarding to whether scale out happened
-function handleScaleOut(context,entries) {
+function handleScaleOut(context, entries) {
     return new Promise((resolve, reject) => {
         //if at least one server is 'creating', this means that it's enough to handle the incoming load
         if (entries.some(x => x.State._ === constants.creatingState)) {
             resolve(false);
         } else {
             const {
-                capacity, load
+                capacity,
+                load
             } = calculateLoadAndCapacity(context, entries);
             //context.log(capacity + ' ' + load);
             if (load / capacity > 0.8) {
@@ -104,7 +104,7 @@ function handleScaleIn(context, entries) {
                     server = running[i];
                 }
             }
-            
+
             setACIState(server.PartitionKey._, server.RowKey._)
                 .then(() => resolve(true))
                 .catch((err) => reject(err));
@@ -144,14 +144,16 @@ function setACIState(resourceGroup, containerGroupName) {
 function createNewACI() {
     return new Promise(function (resolve, reject) {
         if (process.env.CONTAINER_GROUP_TEMPLATE) {
-            const name = utilities.generateRandomString(7);
-            let containerGroupString = process.env.CONTAINER_GROUP_TEMPLATE;
-            containerGroupString = containerGroupString.replace('%CONTAINER_GROUP_NAME%', name)
-                .replace('%CONTAINER_NAME%', name)
-                .replace('%MOUNT_STORAGE_ACCOUNT_NAME%', process.env.MOUNT_STORAGE_ACCOUNT_NAME)
-                .replace('%MOUNT_STORAGE_ACCOUNT_KEY%', process.env.MOUNT_STORAGE_ACCOUNT_KEY);
 
-            const aciData = JSON.parse(containerGroupString);
+            const aciData = JSON.parse(process.env.CONTAINER_GROUP_TEMPLATE);
+
+            const randomName = utilities.generateRandomString(5);
+
+            //set env variables - change the following lines depending on your deployment template
+            aciData.containerGroupName += randomName;
+            aciData.containerGroup.containers[0].name += randomName;
+            aciData.containerGroup.volumes[0].azureFile.storageAccountName = process.env.MOUNT_STORAGE_ACCOUNT_NAME;
+            aciData.containerGroup.volumes[0].azureFile.storageAccountKey = process.env.MOUNT_STORAGE_ACCOUNT_KEY;
 
             request({
                 url: process.env.ACI_CREATE_URL,
@@ -177,8 +179,8 @@ function createNewACI() {
 function calculateLoadAndCapacity(context, entries) {
     //calculate total capacity and current load of our servers
     const capacity = entries.length * config.maxPlayersPerServer;
-    const load = entries.map(el=>el.ActiveSessions._).reduce((a, b) => a + b, 0);
-    
+    const load = entries.map(el => el.ActiveSessions._).reduce((a, b) => a + b, 0);
+
     return {
         capacity,
         load: load

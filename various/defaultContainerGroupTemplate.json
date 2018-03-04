@@ -1,17 +1,17 @@
 {
     "resourceGroup": "acimanagement",
-    "containerGroupName": "%CONTAINER_GROUP_NAME%",
-    "containerGroup" : {
+    "containerGroupName": "openarena",
+    "containerGroup": {
         "location": "westeurope",
         "containers": [{
-            "name": "%CONTAINER_NAME%",
-            "image": "dgkanatsios/docker_openarena", 
+            "name": "openarena",
+            "image": "dgkanatsios/docker_openarena",
             "environmentVariables": [{
-              "name":"OA_STARTMAP",
-              "value":"dm4ish"
-            },{
-              "name":"OA_PORT",
-              "value":"27960"
+                "name": "OA_STARTMAP",
+                "value": "dm4ish"
+            }, {
+                "name": "OA_PORT",
+                "value": "27960"
             }],
             "resources": {
                 "requests": {
@@ -23,12 +23,11 @@
                 "protocol": "udp",
                 "port": 27960
             }],
-            "volumeMounts":[{
-              "name":"openarenadatavolume",
-              "mountPath": "/data",
-              "readOnly": false
-            }
-              ]
+            "volumeMounts": [{
+                "name": "openarenadatavolume",
+                "mountPath": "/data",
+                "readOnly": false
+            }]
         }],
         "ipAddress": {
             "ports": [{
@@ -39,12 +38,12 @@
         },
         "osType": "Linux",
         "volumes": [{
-      "name": "openarenadatavolume",
-      "azureFile": {
-        "shareName": "openarenadata",
-        "storageAccountName": "%MOUNT_STORAGE_ACCOUNT_NAME%",
-        "storageAccountKey": "%MOUNT_STORAGE_ACCOUNT_KEY%"
-      }
-    }]
+            "name": "openarenadatavolume",
+            "azureFile": {
+                "shareName": "openarenadata",
+                "storageAccountName": "TO_BE_FILLED_ON_DEPLOYMENT",
+                "storageAccountKey": "TO_BE_FILLED_ON_DEPLOYMENT"
+            }
+        }]
     }
 }
