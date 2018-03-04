@@ -16,9 +16,6 @@ There is also a Function (`ACISetState`) that enables the caller to set the stat
 
 Finally, we suppose that there is an external service that uses our Functions to manage running Docker containers and schedule sessions on them.
 
-## Inspiration
-This project was heavily inspired by a similar project that deals with a similar issue but uses Azure VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
-
 ## One-click deployment
 
 Click the following button to deploy the project to your Azure subscription:
@@ -43,7 +40,7 @@ We've created a couple of demos so that you can test the project, check the deta
 
 ## Technical details
 
-This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) and [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/). All operations deal with [Container Groups](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-groups), which are the top-level resource in Azure Container Instances. Each Container Group can have X number of containers, a public IP etc. Most Functions are HTTP-triggered unless otherwise noted. Moreover, HTTP-triggered Functions are protected by ['authorization keys'](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys). 
+This project allows you to manage [Azure Container Instances](https://azure.microsoft.com/en-us/services/container-instances/) using [Azure Functions](https://azure.microsoft.com/en-us/services/functions/) and [Event Grid](https://azure.microsoft.com/en-us/services/event-grid/). All operations deal with [Container Groups](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-container-groups), which are the top-level resource in Azure Container Instances. Each Container Group can have X number of containers, a public IP etc. Most Functions are HTTP-triggered unless otherwise noted. Moreover, all HTTP-triggered Functions are protected by ['authorization keys'](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-http-webhook#authorization-keys) apart from the `ACIList` Function, which needs to be anonymous so it can be called by the 'list servers' HTML page. 
 
 - **ACICreate**: Creates a new Azure Container Group. Details (container image, volume mounts, resource group, container and container group names) are passed via the POST request.
 - **ACIDelete**: Deletes a Container Group with the specified name at the specified Resource Group (details are again passed in the POST body).
@@ -54,7 +51,7 @@ This project allows you to manage [Azure Container Instances](https://azure.micr
 - **ACISetSessions**: Sets the number of active/running sessions for each Container Group. Caller can send number of sessions for one or more Container Groups. This way, this method can be called by the external service (it will report active sessions for all containers) or by each container itself (it will report active sessions for itself only).
 - **ACISetState**: Sets the state of the specified Container Group. The only allowed options are 'MarkedForDeletion' and 'Failed'.
 
-As mentioned before, the HTTP-triggered Functions are supposed to be called by an external service (for a game, this would be the matchmaking service). The details of all containers are saved in an [Azure Table Storage](https://azure.microsoft.com/en-us/services/storage/tables/) table. For each container, there is a row that holds data regarding its name (specifically, the container group name), the Resource Group it belongs to, its Public IP Address, its active sessions and its state.
+As mentioned before, the HTTP-triggered Functions are supposed to be called by an external service (for a game, this would potentially be the matchmaking service). The details of all running container groups/instances are saved in an [Azure Table Storage](https://azure.microsoft.com/en-us/services/storage/tables/) table that is created during deployment. For each container, there is a row that holds data regarding its name (specifically, the container group name), the Resource Group it belongs to, its Public IP Address, the Azure datacenter location it was created on, its CPU/RAM resources, its current active sessions and its state.
 
 In this table, Azure Container Groups can hold one of the below states:
 
@@ -63,13 +60,13 @@ In this table, Azure Container Groups can hold one of the below states:
 - **MarkedForDeletion**: We can mark a Container Group as `MarkedForDeletion` so that it will be deleted when a) there are no more active sessions and b) the **ACIGC** Function runs
 - **Failed**: When something has gone bad
 
-Moreover, if you navigate to the root of the deployment using a web browser (e.g. visit https://your_function_name.azurewebsites.net) you will see a page that displays details about your running servers (Public IPs, ActiveSessions, datacenter Location etc.).
+Moreover, if you navigate to the root of the deployment using a web browser (e.g. visit https://your_function_name.azurewebsites.net) you will see a 'list servers' page that displays details about your running servers (Public IPs, ActiveSessions, datacenter Location etc.). The HTML page exists in the `ACIList` Function and served via a `?html=something` input in the query string. We're using [Azure Functions Proxies](https://docs.microsoft.com/en-us/azure/azure-functions/functions-proxies) to have the root path (/) of the application point to the HTML file using the special query string. Check the `proxies.json` file for details.
 
 ## Flow
 
 ![How Functions are called](media/animation.gif)
 
-A typical flow of the project goes like this:
+A typical flow of the project scenario goes like this:
 
 1. External service calls `ACICreate`, so a new Container Group is created and is set to `Creating` state in the table.
 2. As soon as the Event Grid notification comes to `ACIMonitor` function, this means that the Container Group is ready. The `ACIMonitor` function inserts its public IP into Table Storage and sets its state to `Running`.
@@ -82,7 +79,6 @@ A typical flow of the project goes like this:
 **Important**: We take it for granted that the server application will contain code to get access to its state. This way, if its current state is 'MarkedForDeletion', there will be no other sessions on this server when the current workload will finish (e.g. if we're running a multiplayer game server, players will disconnect and return to the matchmaking lobby after the current game complates). This way, Container Instance can safely be removed by the `ACIGC` Function.
 
 ![States and Transitions](media/states.jpg)
-
 
 ## ACIAutoScaler
 
@@ -97,6 +93,9 @@ For the scale out to work, user (optionally) has to manually fill values for the
 - `CONTAINER_GROUP_TEMPLATE`: the ARM template for the container group that will be deployed. You can use the contents of [this](/various/defaultContainerGroupTemplate.json) file as a starting point (same file you can use for the OpenArena demo).
 
 The autoscaling is considered work in progress but can be used as a starting point for you to establish your own rules.
+
+## Inspiration
+This project was heavily inspired by a similar project that deals with a similar issue but uses Azure VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
 
 ## FAQ
 
