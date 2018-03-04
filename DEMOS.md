@@ -2,6 +2,12 @@
 
 # AzureContainerInstancesManagent - Demos
 
+![OpenArena collage](https://vignette.wikia.nocookie.net/openarena/images/9/9e/OpenArena_Collage.jpg/revision/latest?cb=20080625093517)
+*OpenArena game
+
+<img src="https://www.teeworlds.com/images/screens/screenshot_jungle.png" alt="Teeworlds" width="450">
+*Teeworlds game
+
 We have created two demos for you to test this project with, both of which are related games. We have modified the Docker images of the popular open source games [OpenArena](http://openarena.wikia.com/wiki/Main_Page) and [Teeworlds](https://www.teeworlds.com/), both of which can easily be used to demonstrate this project. You can find the modified Docker image for OpenArena [here](https://github.com/dgkanatsios/docker_openarena) and for Teeworlds [here](https://github.com/dgkanatsios/docker-teeworlds). Both repos have been configured with [Docker Hub automated build](https://docs.docker.com/docker-hub/builds/). In this way, every push to GitHub modifies the images on Docker Hub ([OpenArena](https://hub.docker.com/r/dgkanatsios/docker_openarena/) and [Teeworlds](https://hub.docker.com/r/dgkanatsios/docker-teeworlds/)).
 
 The steps to run the demo for both games are pretty similar. The big difference is that in the case of the OpenArena game we have taken the game's files (executables, assets, everything) outside the Docker image, in order to save on its final size. We will use an [Azure File share](https://docs.microsoft.com/en-us/azure/storage/files/storage-files-introduction) to store the files. This share will be `volume mounted` from the running container when it's created. So, here are the steps that you could use if you wanted to set up a quick demo of the project:

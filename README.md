@@ -67,6 +67,8 @@ Moreover, if you navigate to the root of the deployment using a web browser (e.g
 
 ## Flow
 
+![How Functions are called](media/animation.gif)
+
 A typical flow of the project goes like this:
 
 1. External service calls `ACICreate`, so a new Container Group is created and is set to `Creating` state in the table.
@@ -79,7 +81,7 @@ A typical flow of the project goes like this:
 
 **Important**: We take it for granted that the server application will contain code to get access to its state. This way, if its current state is 'MarkedForDeletion', there will be no other sessions on this server when the current workload will finish (e.g. if we're running a multiplayer game server, players will disconnect and return to the matchmaking lobby after the current game complates). This way, Container Instance can safely be removed by the `ACIGC` Function.
 
-![alt text](media/states.jpg "States and Transition")
+![States and Transitions](media/states.jpg)
 
 
 ## ACIAutoScaler
