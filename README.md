@@ -29,7 +29,7 @@ This operation will trigger a template deployment of the [deploy.json](deploy.js
 You need to specify the following information in order to deploy the project:
 - *Location*: select the Azure Region where your resources will be deployed. [Make sure to select a location that Azure Container Instances are available](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability).
 - *Function Name*: select a unique name for your Function App. This will determine your Function's DNS, so choose wisely.
-- *Client ID and Client Secret: Make sure you have them, as previously described.
+- *Client ID and Client Secret: Make sure you have them, as previously described. The ClientID is the same as `appId`, should be a [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)
 - *Repo URL*: this determines the repo that contains the files which will be pulled to create the Azure Functions. You can leave the default or switch it with your own fork.
 
 The Functions are deployed on a Free [App Service Plan](https://docs.microsoft.com/lt-lt/azure/azure-functions/functions-scale#app-service-plan), you may need to scale it up for increased performance.
@@ -103,7 +103,7 @@ You may see that there is an `ACIAutoScaler` Function, disabled by default (valu
 For the scale out to work, user (optionally) has to manually fill values for the following environment variables:
 - `MOUNT_STORAGE_ACCOUNT_NAME`: the name of a storage account, will be mounted during boot
 - `MOUNT_STORAGE_ACCOUNT_KEY`: the key for this storage account
-- `CONTAINER_GROUP_TEMPLATE`: the ARM template for the container group that will be deployed. You can use the contents of [this](/various/defaultContainerGroupTemplate.json) file as a starting point (same file you can use for the OpenArena demo).
+- `CONTAINER_GROUP_TEMPLATE`: the ARM template for the container group that will be deployed. You can use the contents of [this](/various/defaultContainerGroupTemplate.json) file as a starting point (you can modify this file and use it for the OpenArena demo).
 
 The autoscaling is considered work in progress but can be used as a starting point for you to establish your own rules.
 
