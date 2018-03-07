@@ -45,7 +45,10 @@ echo $STORAGE_ACCOUNT
 STORAGE_KEY=$(az storage account keys list --resource-group $ACI_PERS_RESOURCE_GROUP --account-name $STORAGE_ACCOUNT --query "[0].value" --output tsv)
 echo $STORAGE_KEY
 ```
-Keep these credentials handy as you will need them when you will deploy your Container Group for OpenArena game.
+
+You can also find this script in the `various` folder [here](various/createstorage.sh).
+
+Keep the STORAGE_ACCOUNT and STORAGE_KEY credentials handy as you will need them when you will deploy your Container Group for OpenArena game.
 - (*OpenArena game only*) Download the game and place all its files onto the Azure File share you created. You can
     - download the files locally and use [Azcopy](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy) or [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) to upload them on the share
     - mount the share locally or on an Azure VM, download the files and transfer them via SMB (this proved to be must faster in our tests). You can use this command on Windows
