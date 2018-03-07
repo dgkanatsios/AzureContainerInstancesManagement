@@ -32,7 +32,9 @@ You need to specify the following information in order to deploy the project:
 
 The Functions are deployed on a Free [App Service Plan](https://docs.microsoft.com/lt-lt/azure/azure-functions/functions-scale#app-service-plan), you may need to scale it up for increased performance.
 
-As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function manually using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). As soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created).
+As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created). This will make the Event Grid send a message to the `ACIMonitor` Function as soon as there is a resource modification in the specified Resource Group. As soon as this completes, your deployment is ready.
+
+Optionally, as soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. 
 
 ## Demo
 
