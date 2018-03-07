@@ -18,7 +18,7 @@ Finally, we suppose that there is an external service that uses our Functions to
 
 ## One-click deployment
 
-Before you deploy the project, you need to create an Azure Service Principal. This is an identity that has permissions to create/delete/modify Azure Resources (in this case, the Container Instances). Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to create a Service Principal in the Azure Portal and [here](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest) on using the Azure CLI to achieve the same goal. Keep the Service Principal's ID and secret handy as you will need them during the template deployment.
+Before you deploy the project, you need to create an Azure Service Principal. This is an identity that has permissions to create/delete/modify Azure Resources (in this case, the Container Instances). Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to create a Service Principal in the Azure Portal and [here](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest) on using the Azure CLI to achieve the same goal. Keep the Service Principal's ID and secret handy as you will need them during the template deployment. Moreover, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability) to see the Azure datacenter regions that ACI service is supported.
 
 When you have created the Service Principal, click the following button to deploy the project to your Azure subscription:
 
