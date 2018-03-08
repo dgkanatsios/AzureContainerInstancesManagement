@@ -21,6 +21,9 @@
             },
             "ports": [{
                 "protocol": "udp",
+                "port": 27950
+            },{
+                "protocol": "udp",
                 "port": 27960
             }],
             "volumeMounts": [{
@@ -32,6 +35,9 @@
         "ipAddress": {
             "ports": [{
                 "protocol": "udp",
+                "port": 27950
+            },{
+                "protocol": "udp",
                 "port": 27960
             }],
             "type": "Public"
@@ -41,8 +47,8 @@
             "name": "openarenadatavolume",
             "azureFile": {
                 "shareName": "openarenadata",
-                "storageAccountName": "TO_BE_FILLED_ON_DEPLOYMENT",
-                "storageAccountKey": "TO_BE_FILLED_ON_DEPLOYMENT"
+                "storageAccountName": "CHANGE ME",
+                "storageAccountKey": "CHANGE ME"
             }
         }]
     }

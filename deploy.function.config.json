@@ -59,8 +59,6 @@
                         "ACI_SET_STATE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetState'),'2015-08-01').trigger_url]",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
                         "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]",
-                        "MOUNT_STORAGE_ACCOUNT_NAME": "",
-                        "MOUNT_STORAGE_ACCOUNT_KEY": "",
                         "CONTAINER_GROUP_TEMPLATE":""
                     }
                 }

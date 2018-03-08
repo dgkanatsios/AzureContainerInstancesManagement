@@ -100,6 +100,9 @@ For the OpenArena you can use the following POST body. Make sure you change the 
             },
             "ports": [{
                 "protocol": "udp",
+                "port": 27950
+            },{
+                "protocol": "udp",
                 "port": 27960
             }],
             "volumeMounts":[{
@@ -111,6 +114,9 @@ For the OpenArena you can use the following POST body. Make sure you change the 
         }],
         "ipAddress": {
             "ports": [{
+                "protocol": "udp",
+                "port": 27950
+            },{
                 "protocol": "udp",
                 "port": 27960
             }],

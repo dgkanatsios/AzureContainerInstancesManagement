@@ -105,7 +105,7 @@ function handleScaleIn(context, entries) {
                 }
             }
 
-            setACIState(server.PartitionKey._, server.RowKey._)
+            setACIStateAsMarkedForDeletion(server.PartitionKey._, server.RowKey._)
                 .then(() => resolve(true))
                 .catch((err) => reject(err));
 
@@ -115,7 +115,7 @@ function handleScaleIn(context, entries) {
     });
 }
 
-function setACIState(resourceGroup, containerGroupName) {
+function setACIStateAsMarkedForDeletion(resourceGroup, containerGroupName) {
     return new Promise(function (resolve, reject) {
         const aciData = {
             resourceGroup: resourceGroup,
@@ -149,11 +149,9 @@ function createNewACI() {
 
             const randomName = utilities.generateRandomString(5);
 
-            //set env variables - change the following lines depending on your deployment template
+            //set a random name for the container/container group
             aciData.containerGroupName += randomName;
             aciData.containerGroup.containers[0].name += randomName;
-            aciData.containerGroup.volumes[0].azureFile.storageAccountName = process.env.MOUNT_STORAGE_ACCOUNT_NAME;
-            aciData.containerGroup.volumes[0].azureFile.storageAccountKey = process.env.MOUNT_STORAGE_ACCOUNT_KEY;
 
             request({
                 url: process.env.ACI_CREATE_URL,
