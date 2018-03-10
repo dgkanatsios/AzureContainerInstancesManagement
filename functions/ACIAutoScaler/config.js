@@ -3,7 +3,7 @@ const config = {
     scaleOut: true,
     maxPlayersPerServer: 12,
     containerName: "autoscaler",
-    blob:"details.json"
+    blobName:"details.json"
 };
 
 module.exports = config;

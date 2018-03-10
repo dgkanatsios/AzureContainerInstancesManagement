@@ -7,6 +7,11 @@ const utilities = require('../shared/utilities');
 const tableSvc = azurestorage.createTableService();
 const cooldownhelpers = require('./cooldownhelpers');
 
+const scaleOutThreshold = process.env.AUTOSCALER_SCALE_OUT_THRESHOLD || 0.8;
+const scaleInThreshold = process.env.AUTOSCALER_SCALE_IN_THRESHOLD || 0.6;
+const minimumInstances = process.env.AUTOSCALER_MINIMUM_INSTANCES || 1;
+const maximumInstances = process.env.AUTOSCALER_MAXIMUM_INSTANCES || 10;
+
 function getAllACICreatingOrRunning(context) {
     return new Promise(function (resolve, reject) {
         tableSvc.createTableIfNotExists(tableName,
@@ -89,8 +94,9 @@ function handleScaleOut(context, entries) {
                 capacity,
                 load
             } = calculateLoadAndCapacity(context, entries);
+            const running = entries.filter(x => x.State._ === constants.runningState);
             //context.log(capacity + ' ' + load);
-            if (load / capacity > 0.8) {
+            if (running.length < maximumInstances && load / capacity > scaleOutThreshold) {
                 //load larger than 80% -> scale out by 1
                 createNewACI().then(() => resolve(true)).catch((err) => reject(err));
             } else {
@@ -111,8 +117,8 @@ function handleScaleIn(context, entries) {
         } = calculateLoadAndCapacity(context, running);
         //more than two running servers and
         //less then 60% load
-        if (running.length > 2 && load / capacity < 0.6) {
-            //find the container with the less sessions            
+        if (running.length > minimumInstances && load / capacity < scaleInThreshold) {
+            //find the container with the fewest sessions            
             let lowest = Number.POSITIVE_INFINITY;
             let server;
             for (let i = running.length - 1; i >= 0; i--) {

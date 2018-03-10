@@ -59,7 +59,12 @@
                         "ACI_SET_STATE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetState'),'2015-08-01').trigger_url]",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
                         "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]",
-                        "CONTAINER_GROUP_TEMPLATE":""
+                        "CONTAINER_GROUP_TEMPLATE":"",
+                        "AUTOSCALER_MINIMUM_INSTANCES":"1",
+                        "AUTOSCALER_MAXIMUM_INSTANCES":"10",
+                        "AUTOSCALER_SCALE_OUT_THRESHOLD":"0.8",
+                        "AUTOSCALER_SCALE_IN_THRESHOLD":"0.6",
+                        "AUTOSCALER_COOLDOWN_IN_MINUTES":"5"
                     }
                 }
             ],
