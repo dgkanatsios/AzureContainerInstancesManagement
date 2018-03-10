@@ -156,3 +156,7 @@ Check [here](https://docs.microsoft.com/en-us/azure/container-instances/containe
 
 #### Can I modify my container's restart policy?
 Of course, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-restart-policy#container-restart-policy) for the allowed options as well as [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the correct `restartPolicy` property location on the Container Group ARM template.
+
+## Thanks
+
+- To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions about this
