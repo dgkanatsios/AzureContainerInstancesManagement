@@ -95,7 +95,7 @@ For the OpenArena you can use the following POST body. Make sure you change the 
             "resources": {
                 "requests": {
                     "memoryInGB": 0.5,
-                    "cpu": 0.5
+                    "cpu": 1
                 }
             },
             "ports": [{
@@ -153,7 +153,7 @@ For teeworlds you could use this script, modify the `resourceGroup`, `containerG
             "resources": {
                 "requests": {
                     "memoryInGB": 0.5,
-                    "cpu": 0.5
+                    "cpu": 1
                 }
             },
             "ports": [{

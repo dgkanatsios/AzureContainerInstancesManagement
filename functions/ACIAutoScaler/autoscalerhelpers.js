@@ -5,6 +5,7 @@ const request = require('../shared/external').request;
 const config = require('./config');
 const utilities = require('../shared/utilities');
 const tableSvc = azurestorage.createTableService();
+const cooldownhelpers = require('./cooldownhelpers');
 
 function getAllACICreatingOrRunning(context) {
     return new Promise(function (resolve, reject) {
@@ -32,32 +33,48 @@ function getAllACICreatingOrRunning(context) {
 function handleScaleInOut(context) {
     let entries;
     return new Promise(function (resolve, reject) {
+
         let scaleInHappened = false,
             scaleOutHappened = false;
-        getAllACICreatingOrRunning(context).then(arrayEntries => {
-                entries = arrayEntries;
-                if (config.scaleOut) {
-                    return handleScaleOut(context, entries);
-                } else {
-                    return Promise.resolve(false);
-                }
-            }).then((scaleOutResult) => {
-                scaleOutHappened = scaleOutResult;
-                if (scaleOutResult === false) { //no scale out occurred, let's check for scale in
-                    if (config.scaleIn) {
-                        return handleScaleIn(context, entries);
+
+        //check if the cooldown period has passed since the last scale in/out process
+        cooldownhelpers.cooldownPeriodHasPassed().then(result => {
+            if (result) {//cooldown period has passed
+                getAllACICreatingOrRunning(context).then(arrayEntries => {
+                    entries = arrayEntries;
+                    if (config.scaleOut) {
+                        return handleScaleOut(context, entries);
                     } else {
                         return Promise.resolve(false);
                     }
-                } else {
-                    return Promise.resolve(false); //scale out occured, so no scale in
-                }
-            })
-            .then((scaleInResult) => {
-                scaleInHappened = scaleInResult;
-                resolve(`ScaleIn: ${scaleInHappened}, ScaleOut: ${scaleOutHappened}`);
-            })
-            .catch(err => reject(err));
+                }).then((scaleOutResult) => {
+                    scaleOutHappened = scaleOutResult;
+                    if (scaleOutResult === false) { //no scale out occurred, let's check for scale in
+                        if (config.scaleIn) {
+                            return handleScaleIn(context, entries);
+                        } else {
+                            return Promise.resolve(false);
+                        }
+                    } else {
+                        return Promise.resolve(false); //scale out occured, so no scale in
+                    }
+                }).then((scaleInResult) => {
+                    scaleInHappened = scaleInResult;
+                    if (scaleInHappened || scaleOutHappened) {
+                        return cooldownhelpers.updateLatestScaleInOut();
+                    }
+                    else {
+                        Promise.resolve();
+                    }
+                }).then(() => {
+                    resolve(`ScaleIn: ${scaleInHappened}, ScaleOut: ${scaleOutHappened}`);
+                })
+                    .catch(err => reject(err));
+            }
+            else {
+                resolve(`Cooldown period has not passed, ScaleIn: ${scaleInHappened}, ScaleOut: ${scaleOutHappened}`);
+            }
+        }).catch(err => reject(err));
     });
 }
 

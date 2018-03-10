@@ -45,7 +45,7 @@ let body = {
             resources: {
                 requests: {
                     memoryInGB: 0.5,
-                    cpu: 0.5
+                    cpu: 1
                 }
             },
             ports: [{
