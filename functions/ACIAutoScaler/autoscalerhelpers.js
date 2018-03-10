@@ -96,7 +96,8 @@ function handleScaleOut(context, entries) {
             } = calculateLoadAndCapacity(context, entries);
             const running = entries.filter(x => x.State._ === constants.runningState);
             //context.log(capacity + ' ' + load);
-            if (running.length < maximumInstances && load / capacity > scaleOutThreshold) {
+            if ((entries.length === 0) ||
+                (running.length < maximumInstances && load / capacity > scaleOutThreshold)) {
                 //load larger than 80% -> scale out by 1
                 createNewACI().then(() => resolve(true)).catch((err) => reject(err));
             } else {
