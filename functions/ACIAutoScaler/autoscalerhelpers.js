@@ -38,7 +38,7 @@ function handleScaleInOut(context) {
             scaleOutHappened = false;
 
         //check if the cooldown period has passed since the last scale in/out process
-        cooldownhelpers.cooldownPeriodHasPassed().then(result => {
+        cooldownhelpers.cooldownPeriodHasPassed(context).then(result => {
             if (result) {//cooldown period has passed
                 getAllACICreatingOrRunning(context).then(arrayEntries => {
                     entries = arrayEntries;
