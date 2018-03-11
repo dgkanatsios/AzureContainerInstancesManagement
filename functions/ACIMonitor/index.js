@@ -26,17 +26,38 @@ function modifyTable(context, eventGridEvent) {
                     };
 
                     if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteSuccess') { //ACI up and running
-                        aciData.State = constants.runningState;
-                        monitorhelpers.getPublicIP(resourceGroup, resourceId).then(ip => {
-                            aciData.PublicIP = ip;
-                            tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
-                                if (error) {
-                                    reject(error);
-                                } else {
-                                    resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
+                        //let's check if the entity is in the proper state
+                        tableSvc.retrieveEntity(tableName, resourceGroup, resourceId, function (error, result, response) {
+                            if (!error) {
+                                // result contains the entity
+                                //entity in creating state => all good
+                                if (result.State._ === constants.creatingState) {
+                                    aciData.State = constants.runningState;
+                                    monitorhelpers.getPublicIP(resourceGroup, resourceId).then(ip => {
+                                        aciData.PublicIP = ip;
+                                        tableSvc.mergeEntity(tableName, aciData, function (error, result, response) {
+                                            if (error) {
+                                                reject(error);
+                                            } else {
+                                                resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
+                                            }
+                                        });
+                                    }).catch(err => reject(err));
                                 }
-                            });
-                        }).catch(err => reject(err));
+                                else if(result.State._ === constants.runningState){
+                                    //Event Grid notification already came
+                                    resolve(`Not updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} since it is already in the running state`);
+                                }
+                                else if(result.State._ === constants.markedForDeletionState || result.State._ === constants.failedState){
+                                    reject(`Not updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} since it is in state ${result.State._}`);
+                                }
+                            }
+                            else {
+                                reject(`entity with PartitionKey ${resourceGroup} and RowKey ${resourceId} not found`);
+                            }
+                        });
+
+
                     } else if (eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteFailure' ||
                         eventGridEvent.eventType === 'Microsoft.Resources.ResourceWriteCancel') { //ACI creation failed
                         aciData.State = constants.failedState;
@@ -47,7 +68,7 @@ function modifyTable(context, eventGridEvent) {
                                 resolve(`Updated ResourceGroup ${aciData.PartitionKey} and ID ${aciData.RowKey} and State ${aciData.State}`);
                             }
                         });
-                    } else  {
+                    } else {
                         //context.log(eventGridEvent);
                         resolve(`Event with type ${eventGridEvent.eventType} arrived and was unhandled`);
                     }
