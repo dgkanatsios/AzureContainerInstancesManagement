@@ -64,7 +64,7 @@
                         "AUTOSCALER_MAXIMUM_INSTANCES":"10",
                         "AUTOSCALER_SCALE_OUT_THRESHOLD":"0.8",
                         "AUTOSCALER_SCALE_IN_THRESHOLD":"0.6",
-                        "AUTOSCALER_COOLDOWN_IN_MINUTES":"5"
+                        "AUTOSCALER_COOLDOWN_IN_MINUTES":"10"
                     }
                 }
             ],

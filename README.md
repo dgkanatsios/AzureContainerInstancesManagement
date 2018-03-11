@@ -95,17 +95,22 @@ A typical flow of the project scenario goes like this:
 
 ## ACIAutoScaler
 
-You may see that there is an `ACIAutoScaler` Function, disabled by default (value is set in the `ACIAutoScaler\function.json` file). This function is a timer triggered one and works according to the simple following logic:
+You will see that we have an `ACIAutoScaler` Function, disabled by default (value is set in the `ACIAutoScaler\function.json` file). This function attempts to provide an autoscaling mechanism for this project. It consists of a timer triggered one and works according to the simple following logic:
 - it checks the `ACIAutoScaler\config.json` file for values regarding if scale in/out is allowed and max sessions per server.
-- in order to do 'scale out', sum of current active sessions in all containers must be > 80% of the max load (which is number of containers * max sessions per container). Then, the `ACICreate` Function is called to add another Container Group.
-- in order to do 'scale in', sum of current active sessions in all containers must be < 60% of the max load. Then, the `ACISetState` Function is called to set the container with the fewest active sessions as `MarkedForDeletion` (we take into account that our app/game is clever enough to not schedule any more sessions on this container).
+- in order to do 'scale out', sum of current active sessions in all containers must be > 80% (default value) of the max load (which is number of containers * max sessions per container). Then, the `ACICreate` Function is called to add another Container Group.
+- in order to do 'scale in', sum of current active sessions in all containers must be < 60% (default value) of the max load. Then, the `ACISetState` Function is called to set the container with the fewest active sessions as `MarkedForDeletion` (we take into account that our app/game is clever enough to not schedule any more sessions on this container).
+- There is a number for minimum and maximum instances. Both these as well as the scale in/out thresholds are defined in env variables (explained in the next paragraph)
+- There is a 'cooldown' time involved, the application uses it to make sure that scale in/out operations do have sufficient time to take place before the next one. We use a single value in Azure Blob storage to store the date/time the last cooldown operation took place.
 
-For the scale out to work, user (optionally) has to manually fill values for the following environment variables:
-- `MOUNT_STORAGE_ACCOUNT_NAME`: the name of a storage account, will be mounted during boot
-- `MOUNT_STORAGE_ACCOUNT_KEY`: the key for this storage account
+For all this to work to work, user (optionally) has to manually fill and/or modify values for the following environment variables:
 - `CONTAINER_GROUP_TEMPLATE`: the ARM template for the container group that will be deployed. You can use the contents of [this](/various/defaultContainerGroupTemplate.json) file as a starting point (you can modify this file and use it for the OpenArena demo).
+- `AUTOSCALER_MINIMUM_INSTANCES` (default 1): the minimum number of instances that should exist in our deployment
+- `AUTOSCALER_MAXIMUM_INSTANCES` (default 10): the maximum number of instances
+- `AUTOSCALER_SCALE_OUT_THRESHOLD` (default 0.8): the percentage threshold that, when surpassed, a scale out will happen. For example, if our deployment has 2 servers/instances and each one of them can hold 10 sessions, a scale out operation will take place when there are **17** sessions
+- `AUTOSCALER_SCALE_IN_THRESHOLD` (default 0.6): same as before, but this time for scale in
+- `AUTOSCALER_COOLDOWN_IN_MINUTES` (default 10): the number of minutes for a 'cooldown', i.e. the time that should pass after a scale in/out operation till the next one
 
-The autoscaling is considered work in progress but can be used as a starting point for you to establish your own rules.
+This autoscaling is considered pretty basic but can be used as a starting point for you to create your own algorithm and/or establish your own rules.
 
 ## Inspiration
 This project was heavily inspired by a similar project that deals with a similar issue but uses Azure VMs called [AzureGameRoomsScaler](https://github.com/PoisonousJohn/AzureGameRoomsScaler).
@@ -121,7 +126,7 @@ Indeed, there 4 ARM files on the project. They three of them are executed in the
 - **deploy.function.json**: Deploys the Azure Function App that contains the Functions of our project
 - **deploy.function.config.json**: As we need to set an environment variable that gets the value of our 'ACISetSessions' Function trigger URL, we need to set up this template that executes *after* the deployment of the Azure Function App has completed.
 Whereas the next one is to be executed manually:
-- **deploy.eventgridsubscription.json**: This template can be deployed manually after the deployment of the others has completed. We need the Function App name plus the URL of the ACIMonitor Function.
+- **deploy.eventgridsubscription.json**: This template can be deployed manually after the deployment of the others has completed. We need the Function App name plus the URL of the ACIMonitor Function, which you can easily get via the Function's UI on the Azure Portal.
 
 #### I want to handle more events from Azure Event Grid. Where is the definition of those events?
 Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-resource-groups) for resource group events and [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions) for subscription-wide events.
@@ -133,7 +138,7 @@ As always, Azure documentation is your friend, check [here](https://docs.microso
 Check [here](https://github.com/Azure/azure-functions-host/wiki/Key-management-API) to read some details about Azure Function's key management API. You can easily retrieve them from the Azure Portal by visiting each Function's page.
 
 #### How can I test the Functions?
-Not direct Function testing on this project (yet), however you can see a 'testing' file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
+Not proper Function testing on this project (yet), however you can see a 'testing' file on `tests\index.js`. To run it, you need to setup an `tests\.env` file with the following variables properly set:
 
 - SUBSCRIPTIONID = ''
 - CLIENTID = ''
@@ -157,6 +162,9 @@ Check [here](https://docs.microsoft.com/en-us/azure/container-instances/containe
 #### Can I modify my container's restart policy?
 Of course, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-restart-policy#container-restart-policy) for the allowed options as well as [here](https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups) for the correct `restartPolicy` property location on the Container Group ARM template.
 
+#### I want to use this for my app/game. What is the best way to use it? || I want to modify the AutoScaler, how can I do it?
+For both purposes, the best way to do it would be to fork the project on GitHub and work on it on your own repo/copy. Then, you could easily modify it and either [manually](https://docs.microsoft.com/en-us/azure/azure-functions/deployment-zip-push) deploy it or (even better) use [Continuous deployment](https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment) for Azure Functions.
+
 ## Thanks
 
-- To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions about this
+- To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
