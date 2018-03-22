@@ -96,7 +96,7 @@ function handleScaleOut(context, entries) {
             } = calculateLoadAndCapacity(context, entries);
             const running = entries.filter(x => x.State._ === constants.runningState);
             //context.log(capacity + ' ' + load);
-            if ((entries.length === 0) ||
+            if ((entries.length === 0) || running.length < minimumInstances ||
                 (running.length < maximumInstances && load / capacity > scaleOutThreshold)) {
                 //load larger than 80% -> scale out by 1
                 createNewACI().then(() => resolve(true)).catch((err) => reject(err));
@@ -118,7 +118,7 @@ function handleScaleIn(context, entries) {
         } = calculateLoadAndCapacity(context, running);
         //more than two running servers and
         //less then 60% load
-        if (running.length > minimumInstances && load / capacity < scaleInThreshold) {
+        if ((running.length > minimumInstances && load / capacity < scaleInThreshold) || running.length > maximumInstances) {
             //find the container with the fewest sessions            
             let lowest = Number.POSITIVE_INFINITY;
             let server;
