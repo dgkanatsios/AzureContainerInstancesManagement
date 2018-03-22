@@ -27,8 +27,8 @@ function insertIntoTable(body) {
                         State: constants.creatingState,
                         Location: body.containerGroup.location,
                         Image: body.containerGroup.containers[0].image,
-                        CPU: body.containerGroup.containers[0].resources.cpu,
-                        RAM: body.containerGroup.containers[0].resources.memoryInGB
+                        CPU: body.containerGroup.containers[0].resources.requests.cpu,
+                        RAM: body.containerGroup.containers[0].resources.requests.memoryInGB
                     };
 
                     //there is a chance that the ACI has been created and set to Running before the following piece of code runs
