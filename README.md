@@ -165,6 +165,9 @@ Of course, check [here](https://docs.microsoft.com/en-us/azure/container-instanc
 #### I want to use this for my app/game. What is the best way to use it? || I want to modify the AutoScaler, how can I do it?
 For both purposes, the best way to do it would be to fork the project on GitHub and work on it on your own repo/copy. Then, you could easily modify it and either [manually](https://docs.microsoft.com/en-us/azure/azure-functions/deployment-zip-push) deploy it or (even better) use [Continuous deployment](https://docs.microsoft.com/en-us/azure/azure-functions/functions-continuous-deployment) for Azure Functions.
 
+#### How can I debug my running containers?
+Check [https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-exec](here) on how to execute a command from within a running container of a container group.
+
 ## Thanks
 
 - To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
