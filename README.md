@@ -168,6 +168,9 @@ For both purposes, the best way to do it would be to fork the project on GitHub 
 #### How can I debug my running containers?
 Check [https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-exec](here) on how to execute a command from within a running container of a container group.
 
-## Thanks
+## Presentations
+Check [Brian Peek's](https://github.com/BrianPeek/) presentation about this project on a theater session at Game Developers Conference 2018:
+[![](https://img.youtube.com/vi/32xlmsaCNak/0.jpg)](https://www.youtube.com/watch?v=32xlmsaCNak)
 
+## Thanks
 - To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
