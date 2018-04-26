@@ -171,7 +171,7 @@ Check [here](https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli
 ## Presentations
 - Check [Brian Peek's](https://github.com/BrianPeek/) presentation about this project on a theater session at Game Developers Conference 2018:
 [![](https://img.youtube.com/vi/32xlmsaCNak/0.jpg)](https://www.youtube.com/watch?v=32xlmsaCNak)
-- Also featured on Azure Friday: <iframe src="https://channel9.msdn.com/Shows/Azure-Friday/Azure-Container-Instances-GA-A-new-compute-primitive/player" width="960" height="540" allowFullScreen frameBorder="0"></iframe>
+- Also featured on Azure Friday: https://channel9.msdn.com/Shows/Azure-Friday/Azure-Container-Instances-GA-A-new-compute-primitive 
 
 ## Thanks
 - To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
