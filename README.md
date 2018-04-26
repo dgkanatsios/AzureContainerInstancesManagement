@@ -169,8 +169,9 @@ For both purposes, the best way to do it would be to fork the project on GitHub 
 Check [here](https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli-latest#az-container-exec) on how to execute a command from within a running container of a container group. Moreover, you can use Azure Monitor to check for additional runtime metrics, check [here](https://azure.microsoft.com/en-gb/blog/azure-monitor-general-availability-of-multi-dimensional-metrics-apis/) for more details.
 
 ## Presentations
-Check [Brian Peek's](https://github.com/BrianPeek/) presentation about this project on a theater session at Game Developers Conference 2018:
+- Check [Brian Peek's](https://github.com/BrianPeek/) presentation about this project on a theater session at Game Developers Conference 2018:
 [![](https://img.youtube.com/vi/32xlmsaCNak/0.jpg)](https://www.youtube.com/watch?v=32xlmsaCNak)
+- Also featured on Azure Friday: <iframe src="https://channel9.msdn.com/Shows/Azure-Friday/Azure-Container-Instances-GA-A-new-compute-primitive/player" width="960" height="540" allowFullScreen frameBorder="0"></iframe>
 
 ## Thanks
 - To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
