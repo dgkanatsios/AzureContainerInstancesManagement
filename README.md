@@ -121,12 +121,12 @@ This project was heavily inspired by a similar project that deals with a similar
 This guides the [Kudu](https://github.com/projectkudu/kudu) engine as to where the source code for the Functions is located, in the GitHub repo. Check [here](https://github.com/projectkudu/kudu/wiki/Customizing-deployments) for details.
 
 #### Why are there 4 ARM templates instead of one?
-Indeed, there 4 ARM files on the project. They three of them are executed in the following order:
+Indeed, there 4 ARM files on the project. They first three of them are executed in the following order:
 - **deploy.json**: The master template that deploys the next two
 - **deploy.function.json**: Deploys the Azure Function App that contains the Functions of our project
 - **deploy.function.config.json**: As we need to set an environment variable that gets the value of our 'ACISetSessions' Function trigger URL, we need to set up this template that executes *after* the deployment of the Azure Function App has completed.
 Whereas the next one is to be executed manually:
-- **deploy.eventgridsubscription.json**: This template can be deployed manually after the deployment of the others has completed. We need the Function App name plus the URL of the ACIMonitor Function, which you can easily get via the Function's UI on the Azure Portal.
+- **deploy.eventgridsubscription.json**: This template should be deployed **manually** by the user, when the deployment of the others has completed. Reason for this is that in order for this deployment to work, you need the Function App name plus the URL of the ACIMonitor Function, which you can easily get via the Function's UI on the Azure Portal.
 
 #### I want to handle more events from Azure Event Grid. Where is the definition of those events?
 Check [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-resource-groups) for resource group events and [here](https://docs.microsoft.com/en-us/azure/event-grid/event-schema-subscriptions) for subscription-wide events.
@@ -172,6 +172,7 @@ Check [here](https://docs.microsoft.com/en-us/cli/azure/container?view=azure-cli
 - Check [Brian Peek's](https://github.com/BrianPeek/) presentation about this project on a theater session at Game Developers Conference 2018:
 [![](https://img.youtube.com/vi/32xlmsaCNak/0.jpg)](https://www.youtube.com/watch?v=32xlmsaCNak)
 - Also featured on Azure Friday: https://channel9.msdn.com/Shows/Azure-Friday/Azure-Container-Instances-GA-A-new-compute-primitive 
+- To be presented at Mirosoft Build 2018
 
 ## Thanks
 - To [Brian Peek](https://github.com/BrianPeek/) for testing, feedback and all the great discussions concerning this project.
