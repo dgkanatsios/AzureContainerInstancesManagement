@@ -29,7 +29,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/msi/deploy.function.json"
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.json"
                 },
                 "parameters": {
                     "storageName": {
@@ -64,7 +64,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/msi/deploy.function.config.json"
+                    "uri": "https://raw.githubusercontent.com/dgkanatsios/AzureContainerInstancesManagement/master/deploy.function.config.json"
                 },
                 "parameters": {
                     "storageName": {
