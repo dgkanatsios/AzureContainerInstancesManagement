@@ -1,32 +1,26 @@
 const MsRest = require('../shared/external').MsRest;
 const ContainerInstanceManagementClient = require('../shared/external').ContainerInstanceManagementClient;
-const clientId = process.env.CLIENTID;
-const secret = process.env.CLIENTSECRET;
-const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
-function getPublicIP(resourceGroup, containerGroupName){
-    return new Promise(function(resolve,reject){
-        MsRest.loginWithServicePrincipalSecret(
-            clientId,
-            secret,
-            domain,
-            (err, credentials) => {
-                if (err) throw err;
+function getPublicIP(resourceGroup, containerGroupName) {
+    return new Promise(function (resolve, reject) {
+        MsRest.loginWithAppServiceMSI().then(credentials => {
 
-                const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+            const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                client.containerGroups.get(resourceGroup, containerGroupName)
-                    .then(response => {
-                        resolve(response.ipAddress.ip);
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            });
+            client.containerGroups.get(resourceGroup, containerGroupName)
+                .then(response => {
+                    resolve(response.ipAddress.ip);
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        }).catch(err => {
+            reject(err);
+        });
     });
 }
 
-module.exports={
+module.exports = {
     getPublicIP
 };

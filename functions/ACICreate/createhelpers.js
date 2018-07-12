@@ -3,9 +3,6 @@ const ContainerInstanceManagementClient = require('../shared/external').Containe
 const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 const tableName = constants.tableName;
-const clientId = process.env.CLIENTID;
-const secret = process.env.CLIENTSECRET;
-const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
 function insertIntoTable(body) {
@@ -55,12 +52,7 @@ function insertIntoTable(body) {
 
 function createContainerGroup(body) {
     return new Promise(function (resolve, reject) {
-        MsRest.loginWithServicePrincipalSecret(
-            clientId,
-            secret,
-            domain,
-            (err, credentials) => {
-                if (err) throw err;
+        MsRest.loginWithAppServiceMSI().then(credentials => {
 
                 const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
@@ -69,7 +61,9 @@ function createContainerGroup(body) {
                 client.containerGroups.createOrUpdate(body.resourceGroup, body.containerGroupName, body.containerGroup)
                     .then(response => resolve(JSON.stringify(response)))
                     .catch(err => reject(err));
-            });
+            }).catch(err => {
+                reject(err);
+            });;
     });
 }
 

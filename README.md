@@ -18,9 +18,7 @@ Finally, we suppose that there is an external service that uses our Functions to
 
 ## One-click deployment
 
-Before you deploy the project, you need to create an Azure Service Principal. This is an identity that has permissions to create/delete/modify Azure Resources (in this case, the Container Instances). Check [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-create-service-principal-portal) for instructions on how to create a Service Principal in the Azure Portal and [here](https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli?view=azure-cli-latest) on using the Azure CLI to achieve the same goal. Keep the Service Principal's ID and secret handy as you will need them during the template deployment. Moreover, check [here](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability) to see the Azure datacenter regions that ACI service is supported.
-
-When you have created the Service Principal, click the following button to deploy the project to your Azure subscription:
+Click the following button to deploy the project to your Azure subscription:
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdgkanatsios%2FAzureContainerInstancesManagement%2Fmaster%2Fdeploy.json" target="_blank"><img src="http://azuredeploy.net/deploybutton.png"/></a>
 
@@ -29,12 +27,19 @@ This operation will trigger a template deployment of the [deploy.json](deploy.js
 You need to specify the following information in order to deploy the project:
 - *Location*: select the Azure Region where your resources will be deployed. [Make sure to select a location that Azure Container Instances are available](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability).
 - *Function Name*: select a unique name for your Function App. This will determine your Function's DNS, so choose wisely.
-- *Client ID and Client Secret: Make sure you have them, as previously described. The ClientID is the same as `appId`, should be a [GUID](https://en.wikipedia.org/wiki/Universally_unique_identifier)
 - *Repo URL*: this determines the repo that contains the files which will be pulled to create the Azure Functions. You can leave the default or switch it with your own fork.
 
 The Functions are deployed on a Free [App Service Plan](https://docs.microsoft.com/lt-lt/azure/azure-functions/functions-scale#app-service-plan), you may need to scale it up for increased performance.
 
-As soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created). This will make the Event Grid send a message to the `ACIMonitor` Function as soon as there is a resource modification in the specified Resource Group. As soon as this completes, your deployment is ready. Optionally, as soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. 
+The project uses [Managed Service Identity](https://docs.microsoft.com/en-us/azure/active-directory/managed-service-identity/overview) and its relationship with [Azure Functions](https://docs.microsoft.com/en-us/azure/app-service/app-service-managed-service-identity) to authenticate to the Azure ARM API Management Service in order to create/delete/modify the Azure Container Instances needed. The deployment script automatically creates an app identity for the Function App, however you need to give this identity permissions to the Resource Group that will host your Container Instances. To do that:
+
+- Visit the [Azure Portal](https://portal.azure.com)
+- Find the Resource Group(s) that you will create your Container Instances in (this may be the same Resource Group that your Function App is hosted)
+- Select "Access Control (IAM)"
+- Select "Add", "Contributor" as Role, assign access to "Function App" and then select your Azure Function by modifying the subscription/resource group drop down boxes
+- Click "Save", you're done!
+
+Moreover, as soon as the deployment completes, you need to manually add the Event Subscription webhook for the `ACIMonitor` Function using the instructions [here](https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-event-grid#create-a-subscription). Just make sure that you select the correct Resource Group to monitor for events (i.e. the Azure Resource Group where your containers will be created). This will make the Event Grid send a message to the `ACIMonitor` Function as soon as there is a resource modification in the specified Resource Group. As soon as this completes, your deployment is ready. Optionally, as soon as you get the URL of the `ACIMonitor` Function, you can use [this](deploy.eventgridsubscription.json) ARM template to deploy the Event Grid subscription. 
 
 When you deploy the Event Grid subscription using the Portal, these are the values you need to fill in:
 

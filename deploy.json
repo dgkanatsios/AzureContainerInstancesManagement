@@ -13,21 +13,13 @@
                 "description": "It's your Azure Function's domain name. Make sure it is unique, as this will determine Function's DNS"
             }
         },
-        "ClientId": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Service Principal Id which can be used by functions to create Azure Container Groups"
-            }
-        },
-        "ClientSecret": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Service Principal Secret which can be used by functions to create Azure Container Groups"
-            }
-        },
         "repoUrl": {
             "type": "string",
             "defaultValue": "https://github.com/dgkanatsios/AzureContainerInstancesManagement"
+        },
+        "branch":{
+            "type": "string",
+            "defaultValue": "master"
         }
     },
     "resources": [{
@@ -55,6 +47,9 @@
                     "repoUrl": {
                         "value": "[parameters('repoUrl')]"
                     },
+                    "branch": {
+                        "value": "[parameters('branch')]"
+                    },
                     "hostingPlanName": {
                         "value": "[variables('hostingPlanName')]"
                     }
@@ -77,12 +72,6 @@
                     },
                     "acidetailsStorageName": {
                         "value": "[variables('acidetailsStorageName')]"
-                    },
-                    "ClientId": {
-                        "value": "[parameters('ClientId')]"
-                    },
-                    "ClientSecret": {
-                        "value": "[parameters('ClientSecret')]"
                     },
                     "functionName": {
                         "value": "[parameters('functionName')]"
