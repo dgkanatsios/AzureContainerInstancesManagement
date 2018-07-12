@@ -28,6 +28,7 @@ You need to specify the following information in order to deploy the project:
 - *Location*: select the Azure Region where your resources will be deployed. [Make sure to select a location that Azure Container Instances are available](https://docs.microsoft.com/en-us/azure/container-instances/container-instances-quotas#region-availability).
 - *Function Name*: select a unique name for your Function App. This will determine your Function's DNS, so choose wisely.
 - *Repo URL*: this determines the repo that contains the files which will be pulled to create the Azure Functions. You can leave the default or switch it with your own fork.
+- *Branch*: this corresponds to your project's GitHub branch
 
 The Functions are deployed on a Free [App Service Plan](https://docs.microsoft.com/lt-lt/azure/azure-functions/functions-scale#app-service-plan), you may need to scale it up for increased performance.
 
