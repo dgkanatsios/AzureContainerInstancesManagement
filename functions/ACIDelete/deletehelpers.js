@@ -3,9 +3,6 @@ const ContainerInstanceManagementClient = require('../shared/external').Containe
 const azurestorage = require('../shared/external').azurestorage;
 const constants = require('../shared/constants');
 const tableName = constants.tableName;
-const clientId = process.env.CLIENTID;
-const secret = process.env.CLIENTSECRET;
-const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
 function deleteACIFromTable(body) {
@@ -35,23 +32,20 @@ function deleteACIFromTable(body) {
 
 function deleteContainerGroup(body) {
     return new Promise(function (resolve, reject) {
-        MsRest.loginWithServicePrincipalSecret(
-            clientId,
-            secret,
-            domain,
-            (err, credentials) => {
-                if (err) throw err;
+        MsRest.loginWithAppServiceMSI().then(credentials => {
 
-                let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+            let client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
-                    .then(response => {
-                        resolve(JSON.stringify(response));
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            });
+            client.containerGroups.deleteMethod(body.resourceGroup, body.containerGroupName)
+                .then(response => {
+                    resolve(JSON.stringify(response));
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        }).catch(err => {
+            reject(err);
+        });
     });
 }
 

@@ -1,37 +1,30 @@
 const MsRest = require('../shared/external').MsRest;
 const ContainerInstanceManagementClient = require('../shared/external').ContainerInstanceManagementClient;
-const clientId = process.env.CLIENTID;
-const secret = process.env.CLIENTSECRET;
-const domain = process.env.TENANT;
 const subscriptionId = process.env.SUBSCRIPTIONID;
 
 function getContainerGroupDetails(body) {
     return new Promise(function (resolve, reject) {
-        MsRest.loginWithServicePrincipalSecret(
-            clientId,
-            secret,
-            domain,
-            (err, credentials) => {
-                if (err) throw err;
+        MsRest.loginWithAppServiceMSI().then(credentials => {
 
-                const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
+            const client = new ContainerInstanceManagementClient(credentials, subscriptionId);
 
-                let promise;
-                //see if client asked for logs
-                if (body.type && body.type === 'logs') {
-                    promise = client.containerLogs.list(body.resourceGroup, body.containerGroupName, body.containerName);
-                } else {
-                    promise = client.containerGroups.get(body.resourceGroup, body.containerGroupName)
-                }
+            let promise;
+            //see if client asked for logs
+            if (body.type && body.type === 'logs') {
+                promise = client.containerLogs.list(body.resourceGroup, body.containerGroupName, body.containerName);
+            } else {
+                promise = client.containerGroups.get(body.resourceGroup, body.containerGroupName)
+            }
 
 
-                promise.then(response => {
-                        resolve(JSON.stringify(response));
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
-            });
+            promise.then(response => {
+                resolve(JSON.stringify(response));
+            }).catch(err => {
+                    reject(err);
+                });
+        }).catch(err => {
+            reject(err);
+        });
     });
 }
 

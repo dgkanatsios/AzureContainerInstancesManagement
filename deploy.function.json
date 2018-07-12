@@ -24,6 +24,9 @@
 		"repoUrl": {
 			"type": "string"
 		},
+		"branch": {
+			"type": "string"
+		},
 		"hostingPlanName": {
 			"type": "string"
 		}
@@ -76,6 +79,9 @@
 			"apiVersion": "2016-03-01",
 			"name": "[parameters('functionName')]",
 			"type": "Microsoft.Web/Sites",
+			"identity": {
+				"type": "SystemAssigned"
+			},
 			"properties": {
 				"name": "[parameters('functionName')]",
 				"clientAffinityEnabled": false,
@@ -125,7 +131,7 @@
 				],
 				"properties": {
 					"RepoUrl": "[parameters('repoUrl')]",
-					"branch": "master",
+					"branch": "[parameters('branch')]",
 					"IsManualIntegration": true
 				}
 			}],

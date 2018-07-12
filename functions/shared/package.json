@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "azure-arm-containerinstance": "^1.2.0-preview",
-    "azure-storage": "^2.8.0",
-    "ms-rest-azure": "^2.5.2",
+    "azure-arm-containerinstance": "^2.0.0",
+    "azure-storage": "^2.10.0",
+    "ms-rest-azure": "^2.5.7",
     "requestretry": "^1.13.0"
   }
 }

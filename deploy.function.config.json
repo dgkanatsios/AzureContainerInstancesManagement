@@ -11,12 +11,6 @@
         "aciDetailsStorageName": {
             "type": "string"
         },
-        "ClientId": {
-            "type": "securestring"
-        },
-        "ClientSecret": {
-            "type": "securestring"
-        },
         "hostingPlanName": {
             "type": "string"
         }
@@ -47,9 +41,6 @@
                         "FUNCTIONS_EXTENSION_VERSION": "~1",
                         "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
                         "SUBSCRIPTIONID": "[subscription().subscriptionId]",
-                        "TENANT": "[subscription().tenantId]",
-                        "CLIENTID": "[parameters('ClientId')]",
-                        "CLIENTSECRET": "[parameters('ClientSecret')]",
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
                         "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
                         "AZURE_STORAGE_ACCESS_KEY": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('aciDetailsStorageName')), '2015-05-01-preview').key1]",
