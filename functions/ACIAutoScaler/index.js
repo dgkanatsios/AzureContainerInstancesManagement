@@ -12,7 +12,7 @@ module.exports = function (context, myTimer) {
             context.log(res);
             context.done();
         }).catch(err => {
-        context.error(err);
-        context.done();
+        context.log.error(err);
+        context.done(err);
     });
 };
