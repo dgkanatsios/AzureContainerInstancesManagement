@@ -1,3 +1,22 @@
 {
-    "watchDirectories": ["shared"]
+    "version": "2.0",
+    "watchDirectories": [ "shared" ],
+    "healthMonitor": {
+        "enabled": true,
+        "healthCheckInterval": "00:00:10",
+        "healthCheckWindow": "00:02:00",
+        "healthCheckThreshold": 6,
+        "counterThreshold": 0.80
+    },
+    "functionTimeout": "00:05:00",
+    "logging": {
+        "fileLoggingMode": "debugOnly"
+    },
+    "extensions": {
+        "http": {
+            "routePrefix": "api",
+            "maxConcurrentRequests": 5,
+            "maxOutstandingRequests": 30
+        }
+    }
 }
