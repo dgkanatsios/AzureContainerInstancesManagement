@@ -88,20 +88,16 @@
 				"serverFarmId": "[concat('/subscriptions/', variables('subscriptionId'),'/resourcegroups/', variables('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
 				"siteConfig": {
 					"appSettings": [{
-							"name": "AzureWebJobsDashboard",
-							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
-						},
-						{
 							"name": "AzureWebJobsStorage",
 							"value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(parameters('storageName'),'2015-05-01-preview').key1)]"
 						},
 						{
 							"name": "FUNCTIONS_EXTENSION_VERSION",
-							"value": "~1"
+							"value": "~2"
 						},
 						{
 							"name": "WEBSITE_NODE_DEFAULT_VERSION",
-							"value": "6.5.0"
+							"value": "10.6.0"
 						},
 						{
 							"name": "NODE_ENV",
