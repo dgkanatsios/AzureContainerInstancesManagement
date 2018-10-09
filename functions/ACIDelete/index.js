@@ -7,10 +7,10 @@ module.exports = function (context, req) {
         deletehelpers.deleteContainerGroup(req.body).then(() => {
             return deletehelpers.deleteACIFromTable(req.body);
         }).then((res) => {
-            context.res = res;
+            context.res = { status: 200, body: JSON.stringify(res) };
             context.done();
         }).catch(error => {
-            context.error(error);
+            context.log.error(error);
             utilities.setErrorAndCloseContext(context, error, 500);
         });
     } else {

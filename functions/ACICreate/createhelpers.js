@@ -34,13 +34,13 @@ function insertIntoTable(body) {
                         if (!error) {
                             //result contains the entity
                             //leave it as is
-                            resolve(`Not Inserted Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey} as it exists with data: ${JSON.stringify(result)}`);
+                            resolve(`Did not created Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey} as it exists with data: ${JSON.stringify(result)}`);
                         } else { //no entity found
                             tableSvc.insertEntity(tableName, aciData, function (error, result, response) {
                                 if (error) {
                                     reject(error);
                                 } else {
-                                    resolve(`Inserted Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey}`);
+                                    resolve(`Created Container Group with ID ${aciData.RowKey} and State ${aciData.State} on ResourceGroup ${aciData.PartitionKey}`);
                                 }
                             });
                         }
@@ -68,14 +68,14 @@ function createContainerGroup(body) {
 }
 
 function addEnvVariables(resourceGroup, containerGroupName, containerGroup) {
-    //add SET_SESSIONS_URL, RESOURCE_GROUP, CONTAINER_GROUP_NAME
+    //add ACI_SET_SESSIONS_URL, RESOURCE_GROUP, CONTAINER_GROUP_NAME
     containerGroup.containers.forEach(function (container) {
         if (!(container.environmentVariables))
             container.environmentVariables = [];
 
         container.environmentVariables.push({
-            name: 'SET_SESSIONS_URL',
-            value: process.env.SET_SESSIONS_URL
+            name: 'ACI_SET_SESSIONS_URL',
+            value: process.env.ACI_SET_SESSIONS_URL
         }, {
             name: 'RESOURCE_GROUP',
             value: resourceGroup

@@ -53,6 +53,11 @@ When you deploy the Event Grid subscription using the Portal, these are the valu
  - *Prefix filter*: leave it blank
  - *Suffix filter*: also leave it blank
 
+Last but not least, with the new v2 runtime of Azure Functions, the EventGrid binding extension needs registration, check the following articles on how to do it
+
+- https://docs.microsoft.com/en-us/azure/azure-functions/functions-triggers-bindings#register-binding-extensions
+- https://docs.microsoft.com/en-us/azure/azure-functions/install-update-binding-extensions-manual
+
 ## Demo
 
 We've created a couple of demos so that you can test the project, check the detailed documentation at the [DEMOS.md](DEMOS.md) file.
