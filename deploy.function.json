@@ -100,8 +100,8 @@
 							"value": "10.6.0"
 						},
 						{
-							"name": "NODE_ENV",
-							"value": "production"
+							"name":"AzureWebJobsSecretStorageType",
+							"value":"files"
 						},
 						{
 							"name": "APPINSIGHTS_INSTRUMENTATIONKEY",

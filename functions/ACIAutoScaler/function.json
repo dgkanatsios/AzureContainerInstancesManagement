@@ -4,6 +4,5 @@
     "name": "myTimer",
     "type": "timerTrigger",
     "direction": "in"
-  }],
-  "disabled": true
+  }]
 }

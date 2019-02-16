@@ -36,10 +36,11 @@
                         "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.Web/Sites', parameters('functionName'))]"
                     ],
                     "properties": {
+                        "FUNCTIONS_EXTENSION_VERSION": "~2",
+                        "WEBSITE_NODE_DEFAULT_VERSION": "10.6.0",
+                        "AzureWebJobsSecretStorageType": "files",
                         "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
-                        "FUNCTIONS_EXTENSION_VERSION": "~1",
-                        "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
                         "SUBSCRIPTIONID": "[subscription().subscriptionId]",
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', parameters('functionName')), '2015-05-01').InstrumentationKey]",
                         "AZURE_STORAGE_ACCOUNT": "[parameters('aciDetailsStorageName')]",
@@ -50,6 +51,7 @@
                         "ACI_SET_STATE_URL": "[listsecrets(resourceId('Microsoft.Web/sites/functions', parameters('functionName'), 'ACISetState'),'2015-08-01').trigger_url]",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageName')), '2015-05-01-preview').key1)]",
                         "WEBSITE_CONTENTSHARE": "[toLower(parameters('functionName'))]",
+                        "AzureWebJobs.ACIAutoScaler.Disabled":true,
                         "CONTAINER_GROUP_TEMPLATE":"",
                         "AUTOSCALER_MINIMUM_INSTANCES":"1",
                         "AUTOSCALER_MAXIMUM_INSTANCES":"10",
