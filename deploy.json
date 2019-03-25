@@ -81,6 +81,20 @@
                     }
                 }
             }
-        }
+        },
+        {
+        "apiVersion": "2017-05-10",
+        "name": "pid-8f02436d-9971-4c3f-8c8a-8366fb672ba9",
+        "comments": "GUID for tracking production pilot deployments intended for Gaming-ACI-Server-Hosting.",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+            "mode": "Incremental",
+            "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                        "contentVersion": "1.0.0.0",
+                        "resources": []
+                }
+            }
+        }
     ]
 }
